@@ -1,0 +1,67 @@
+2022-07-05 07:39:15,068, INFO, root, Подключение к ElasicSearch выполнено
+2022-07-05 07:39:15,107, INFO, backoff, Backing off try_connect(...) for 0.8s (psycopg2.OperationalError: connection to server at "127.0.0.1", port 5432 failed: fe_sendauth: no password supplied)
+2022-07-05 07:39:15,887, INFO, root, Подключение к ElasicSearch выполнено
+2022-07-05 07:39:15,906, INFO, backoff, Backing off try_connect(...) for 1.5s (psycopg2.OperationalError: connection to server at "127.0.0.1", port 5432 failed: fe_sendauth: no password supplied)
+2022-07-05 07:39:17,404, INFO, root, Подключение к ElasicSearch выполнено
+2022-07-05 07:39:17,424, INFO, backoff, Backing off try_connect(...) for 3.0s (psycopg2.OperationalError: connection to server at "127.0.0.1", port 5432 failed: fe_sendauth: no password supplied)
+2022-07-05 07:39:20,442, INFO, root, Подключение к ElasicSearch выполнено
+2022-07-05 07:39:20,462, INFO, backoff, Backing off try_connect(...) for 3.5s (psycopg2.OperationalError: connection to server at "127.0.0.1", port 5432 failed: fe_sendauth: no password supplied)
+2022-07-05 07:39:35,043, INFO, root, Подключение к ElasicSearch выполнено
+2022-07-05 07:39:35,085, INFO, backoff, Backing off try_connect(...) for 0.3s (psycopg2.OperationalError: connection to server at "127.0.0.1", port 5432 failed: fe_sendauth: no password supplied)
+2022-07-05 07:39:35,343, INFO, root, Подключение к ElasicSearch выполнено
+2022-07-05 07:39:35,360, INFO, backoff, Backing off try_connect(...) for 1.2s (psycopg2.OperationalError: connection to server at "127.0.0.1", port 5432 failed: fe_sendauth: no password supplied)
+2022-07-05 07:39:36,543, INFO, root, Подключение к ElasicSearch выполнено
+2022-07-05 07:39:36,563, INFO, backoff, Backing off try_connect(...) for 3.8s (psycopg2.OperationalError: connection to server at "127.0.0.1", port 5432 failed: fe_sendauth: no password supplied)
+2022-07-05 07:39:40,951, INFO, root, Подключение к ElasicSearch выполнено
+2022-07-05 07:39:46,252, INFO, backoff, Backing off try_connect(...) for 0.7s (psycopg2.OperationalError: connection to server at "127.0.0.1", port 5432 failed: fe_sendauth: no password supplied)
+2022-07-05 07:39:46,986, INFO, root, Подключение к ElasicSearch выполнено
+2022-07-05 07:45:22,527, INFO, backoff, Backing off try_connect(...) for 1.0s (KeyboardInterrupt)
+2022-07-05 07:45:23,484, INFO, root, Подключение к ElasicSearch выполнено
+2022-07-05 07:45:23,518, INFO, backoff, Backing off try_connect(...) for 1.5s (psycopg2.OperationalError: connection to server at "127.0.0.1", port 5432 failed: fe_sendauth: no password supplied)
+2022-07-05 07:45:25,016, INFO, root, Подключение к ElasicSearch выполнено
+2022-07-05 07:45:25,034, INFO, backoff, Backing off try_connect(...) for 4.6s (psycopg2.OperationalError: connection to server at "127.0.0.1", port 5432 failed: fe_sendauth: no password supplied)
+2022-07-05 07:45:29,638, INFO, root, Подключение к ElasicSearch выполнено
+2022-07-05 07:45:29,654, INFO, backoff, Backing off try_connect(...) for 12.0s (psycopg2.OperationalError: connection to server at "127.0.0.1", port 5432 failed: fe_sendauth: no password supplied)
+2022-07-05 07:45:37,052, INFO, root, Подключение к ElasicSearch выполнено
+2022-07-05 07:45:42,852, INFO, backoff, Backing off try_connect(...) for 0.5s (KeyboardInterrupt)
+2022-07-05 07:45:43,372, INFO, root, Подключение к ElasicSearch выполнено
+2022-07-05 07:45:43,397, INFO, backoff, Backing off try_connect(...) for 0.7s (psycopg2.OperationalError: connection to server at "127.0.0.1", port 5432 failed: fe_sendauth: no password supplied)
+2022-07-05 07:45:44,083, INFO, root, Подключение к ElasicSearch выполнено
+2022-07-05 07:45:44,101, INFO, backoff, Backing off try_connect(...) for 0.7s (psycopg2.OperationalError: connection to server at "127.0.0.1", port 5432 failed: fe_sendauth: no password supplied)
+2022-07-05 07:45:48,959, INFO, root, Подключение к ElasicSearch выполнено
+2022-07-05 07:47:28,521, INFO, backoff, Backing off try_connect(...) for 0.3s (KeyboardInterrupt)
+2022-07-05 07:47:28,870, INFO, root, Подключение к ElasicSearch выполнено
+2022-07-05 07:47:28,924, INFO, backoff, Backing off try_connect(...) for 0.8s (psycopg2.OperationalError: connection to server at "127.0.0.1", port 5432 failed: fe_sendauth: no password supplied)
+2022-07-05 07:47:29,743, INFO, root, Подключение к ElasicSearch выполнено
+2022-07-05 07:47:29,761, INFO, backoff, Backing off try_connect(...) for 2.0s (psycopg2.OperationalError: connection to server at "127.0.0.1", port 5432 failed: fe_sendauth: no password supplied)
+2022-07-05 07:47:30,721, INFO, root, Подключение к ElasicSearch выполнено
+2022-07-05 07:47:30,769, INFO, root, Подключение к БД выполнено
+2022-07-05 07:47:30,769, INFO, root, Начало etl
+2022-07-05 07:47:30,770, INFO, backoff, Backing off etl_part1(...) for 0.7s (TypeError: int() argument must be a string, a bytes-like object or a number, not 'NoneType')
+2022-07-05 07:47:31,503, INFO, root, Начало etl
+2022-07-05 07:47:31,503, INFO, backoff, Backing off etl_part1(...) for 0.8s (TypeError: int() argument must be a string, a bytes-like object or a number, not 'NoneType')
+2022-07-05 07:47:32,277, INFO, root, Начало etl
+2022-07-05 07:47:32,277, INFO, backoff, Backing off etl_part1(...) for 2.7s (TypeError: int() argument must be a string, a bytes-like object or a number, not 'NoneType')
+2022-07-05 07:47:32,566, INFO, backoff, Backing off try_connect(...) for 0.8s (KeyboardInterrupt)
+2022-07-05 07:47:33,374, INFO, root, Подключение к ElasicSearch выполнено
+2022-07-05 07:47:33,409, INFO, root, Подключение к БД выполнено
+2022-07-05 07:47:33,409, INFO, root, Начало etl
+2022-07-05 07:47:33,410, INFO, backoff, Backing off etl_part1(...) for 0.1s (TypeError: int() argument must be a string, a bytes-like object or a number, not 'NoneType')
+2022-07-05 07:47:33,558, INFO, root, Начало etl
+2022-07-05 07:47:33,558, INFO, backoff, Backing off etl_part1(...) for 0.7s (TypeError: int() argument must be a string, a bytes-like object or a number, not 'NoneType')
+2022-07-05 07:47:34,253, INFO, root, Начало etl
+2022-07-05 07:47:34,255, INFO, backoff, Backing off etl_part1(...) for 3.2s (TypeError: int() argument must be a string, a bytes-like object or a number, not 'NoneType')
+2022-07-05 07:47:37,411, INFO, root, Подключение к ElasicSearch выполнено
+2022-07-05 07:47:47,547, INFO, root, Подключение к БД выполнено
+2022-07-05 07:47:47,547, INFO, root, Начало etl
+2022-07-05 07:47:47,551, INFO, backoff, Backing off etl_part1(...) for 0.0s (TypeError: int() argument must be a string, a bytes-like object or a number, not 'NoneType')
+2022-07-05 07:47:47,582, INFO, root, Начало etl
+2022-07-05 07:47:47,586, INFO, backoff, Backing off etl_part1(...) for 1.7s (TypeError: int() argument must be a string, a bytes-like object or a number, not 'NoneType')
+2022-07-05 07:47:49,296, INFO, root, Начало etl
+2022-07-05 07:47:49,302, INFO, backoff, Backing off etl_part1(...) for 1.8s (TypeError: int() argument must be a string, a bytes-like object or a number, not 'NoneType')
+2022-07-05 07:47:51,120, INFO, root, Начало etl
+2022-07-05 07:47:51,125, INFO, backoff, Backing off etl_part1(...) for 6.6s (TypeError: int() argument must be a string, a bytes-like object or a number, not 'NoneType')
+2022-07-05 07:47:57,693, INFO, root, Начало etl
+2022-07-05 07:47:57,699, INFO, backoff, Backing off etl_part1(...) for 15.5s (TypeError: int() argument must be a string, a bytes-like object or a number, not 'NoneType')
+2022-07-05 07:48:13,242, INFO, root, Начало etl
+2022-07-05 07:48:13,245, INFO, backoff, Backing off etl_part1(...) for 13.3s (TypeError: int() argument must be a string, a bytes-like object or a number, not 'NoneType')

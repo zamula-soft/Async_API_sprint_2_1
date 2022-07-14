@@ -1,0 +1,8 @@
+django==4.0.4
+uwsgi==2.0.20
+django-split-settings==1.1.0
+flake8==4.0
+python-dotenv==0.20.0
+django-debug-toolbar==3.4.0
+psycopg2-binary==2.9.3
+django-cors-headers==3.13.0
