@@ -7,7 +7,6 @@ import time
 
 
 def transfer_data():
-    """Get movies from Postgres and insert data to ElasticSearch."""
     pg_loader = PGLoader()
     es_loader = ESLoader()
     status = Status()

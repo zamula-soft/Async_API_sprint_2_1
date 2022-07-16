@@ -1,7 +1,7 @@
 from elasticsearch import Elasticsearch, helpers
 import backoff
 
-from settings import ElascticSearchDsl
+from settings import ELASTICSEARCH_DSL
 
 
 FIELDS = [
@@ -19,37 +19,22 @@ FIELDS = [
 
 
 class ESLoader:
-    """Load data to ElasticSearch."""
+    """"""
 
     def __init__(self) -> None:
-        """Init."""
-        self.__client = Elasticsearch(hosts=[ElascticSearchDsl().dict()])
+        self.__client = Elasticsearch(hosts=ELASTICSEARCH_DSL)
 
-    @backoff.on_exception(backoff.expo, BaseException, max_tries=5)
     def save_data(self, data) -> None:
-        """
-        Save data to ElasticSearch.
-
-        :param data: Data for save in ElasticSearch.
-        """
         self.__check_connection()
         helpers.bulk(self.__client, generate_data(data))
 
-    @backoff.on_exception(backoff.expo, BaseException, max_tries=5)
+    @backoff.on_exception(backoff.expo, BaseException)
     def __check_connection(self) -> None:
-        """Check connection to ElasticSearch before save data"""
         if not self.__client.ping():
             raise ConnectionError
 
 
-@backoff.on_exception(backoff.expo, BaseException, max_tries=5)
-def generate_data(movies_list: list) -> dict:
-    """
-    Generate data in need format for ElasticSearch.
-
-    :param movies_list: list of update movies.
-    :return: data for save.
-    """
+def generate_data(movies_list):
     persons_fields = ['actors', 'writers']
     for movie in movies_list:
         doc = {}
