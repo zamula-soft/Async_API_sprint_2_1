@@ -1,5 +1,8 @@
 from elasticsearch import Elasticsearch, helpers
 import backoff
+from typing import Generator, Iterable
+from psycopg2.extras import DictCursor
+
 
 from settings import ELASTICSEARCH_DSL
 
@@ -33,6 +36,18 @@ class ESLoader:
         if not self.__client.ping():
             raise ConnectionError
 
+    def save_genres(self, genres:Iterable)->None:
+        helpers.bulk(self.__client, generate_genres(genres))
+
+        
+
+def generate_genres(genres:Iterable[DictCursor])->Generator[dict, None, None]:
+    for genre in genres:
+        yield {
+            '_index': 'genres',
+            '_id': genre['id'],
+            'name':genre['name'],
+        }
 
 def generate_data(movies_list):
     persons_fields = ['actors', 'writers']
