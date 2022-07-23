@@ -15,6 +15,8 @@ FIELDS = [
     'writers_names',
     'writers',
     'actors',
+    'directors',
+    'genres',
 ]
 
 
@@ -35,7 +37,7 @@ class ESLoader:
 
 
 def generate_data(movies_list):
-    persons_fields = ['actors', 'writers']
+    persons_fields = ['actors', 'writers', 'directors', 'genres']
     for movie in movies_list:
         doc = {}
         for fld_name in FIELDS:

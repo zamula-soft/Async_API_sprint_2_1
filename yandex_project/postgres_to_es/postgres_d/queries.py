@@ -32,6 +32,24 @@ SELECT
         ) FILTER (WHERE pfw.role = 'writer'),
         '[]'
     ) as writers,
+    COALESCE (
+        json_agg(
+            DISTINCT jsonb_build_object(
+                'id', p.id,
+                'name', p.full_name
+            )
+        ) FILTER (WHERE pfw.role = 'director'),
+        '[]'
+    ) as directors,
+    COALESCE (
+        json_agg(
+            DISTINCT jsonb_build_object(
+                'id', g.id,
+                'name', g.name
+            )
+        ),
+        '[]'
+    ) as genres,
     fw.modified
         FROM content.film_work AS fw
             LEFT JOIN content.person_film_work AS pfw ON pfw.film_work_id = fw.id

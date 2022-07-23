@@ -1,6 +1,6 @@
 FROM python:3.10
 
-WORKDIR opt/app/fastapi-colution
+WORKDIR opt/app/fastapi-solution
 
 COPY . .
 

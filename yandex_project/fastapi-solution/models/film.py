@@ -13,6 +13,7 @@ class Film(BaseModel):
     id: str
     title: str
     description: str
+    actors: list
 
     class Config:
         # Заменяем стандартную работу с json на более быструю

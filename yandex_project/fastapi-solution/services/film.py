@@ -14,6 +14,7 @@ FILM_CACHE_EXPIRE_IN_SECONDS = 60 * 5  # 5 минут
 
 class FilmService:
     def __init__(self, redis: Redis, elastic: AsyncElasticsearch):
+        print('ok')
         self.redis = redis
         self.elastic = elastic
 
@@ -27,7 +28,7 @@ class FilmService:
             if not film:
                 # Если он отсутствует в Elasticsearch, значит, фильма вообще нет в базе
                 return None
-            # Сохраняем фильм  в кеш
+            # Сохраняем фильм в кеш
             await self._put_film_to_cache(film)
 
         return film
@@ -37,6 +38,8 @@ class FilmService:
             doc = await self.elastic.get('movies', film_id)
         except NotFoundError:
             return None
+        print(doc['_source'])
+        print(doc)
         return Film(**doc['_source'])
 
     async def _film_from_cache(self, film_id: str) -> Optional[Film]:

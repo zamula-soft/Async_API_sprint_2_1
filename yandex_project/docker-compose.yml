@@ -60,6 +60,8 @@ services:
     env_file:
       - .env
     command: python3 main.py
+    volumes:
+      - fastapi-solution:/opt/app/fastapi-solution
     ports:
       - "8010:8010"
     depends_on:
@@ -85,18 +87,19 @@ services:
       - ./elasticsearch-data:/usr/share/elasticsearch/data
     ports:
       - "9200:9200"
-  kibana:
-    container_name: kibana
-    image: docker.elastic.co/kibana/kibana:7.17.4
-    restart: always
-    environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200    # address of elasticsearch docker container which kibana will connect
-    ports:
-      - "5601:5601"
-    depends_on:
-      - elasticsearch
+#  kibana:
+#    container_name: kibana
+#    image: docker.elastic.co/kibana/kibana:7.17.4
+#    restart: always
+#    environment:
+#      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200    # address of elasticsearch docker container which kibana will connect
+#    ports:
+#      - "5601:5601"
+#    depends_on:
+#      - elasticsearch
 
 
 volumes:
   pgdata:
   web-static:
+  fastapi-solution:
