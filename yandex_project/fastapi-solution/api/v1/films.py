@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
-from pydantic.schema import Optional
+from pydantic.schema import Optional, List
 
 from services.film import FilmService, get_film_service
 
@@ -13,10 +13,10 @@ class Film(BaseModel):
     id: str
     title: str
     rating: float
-    actors: Optional[list]
-    genres: Optional[list]
-    writers: Optional[list]
-    directors: Optional[list]
+    actors: Optional[List[Optional[dict]]]
+    genres: Optional[List[Optional[dict]]]
+    writers: Optional[List[Optional[dict]]]
+    directors: Optional[List[Optional[dict]]]
 
 
 # Внедряем FilmService с помощью Depends(get_film_service)
