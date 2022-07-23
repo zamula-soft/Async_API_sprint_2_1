@@ -1,36 +1,26 @@
 from time import sleep
+from datetime import datetime
+
 from postgres_d import PGLoader
 from elastics import ESLoader
 from redis_work import Status
-from datetime import datetime
-import time
 
 
 def transfer_data():
-    print('start')
+    """
+    Main function for transfer data from postgres to elasticsearch
+    :return:
+    """
     pg_loader = PGLoader()
     es_loader = ESLoader()
     status = Status()
 
-    print(status, pg_loader, es_loader)
-
     mod_date = status.get_status('mod_date')
-
-    print('mod_date', mod_date)
-
-    mod_date = datetime.fromtimestamp(mod_date) if mod_date else None
-
-    print(mod_date)
-
-    new_date = time.time()
-
-    print(new_date)
-
-    print(pg_loader.get_movies_from_database(mod_date))
+    mod_date = mod_date.decode('utf-8') if mod_date else '2020-01-01 00:00:00'
+    new_date = f'{datetime.now()}'
 
     for movies in pg_loader.get_movies_from_database(mod_date):
-        print('jfdk', movies)
-        es_loader.save_data(movies)
+        es_loader.save_movies(movies)
 
     status.set_status('mod_date', new_date)
     status.disconnect()

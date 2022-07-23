@@ -1,56 +1,44 @@
 from datetime import datetime
-from contextlib import contextmanager
 
 import psycopg2
-from psycopg2.extensions import connection as _connection
 from psycopg2.extras import DictCursor
 import backoff
 
 from .queries import QUERY_TEMPLATE, QUERY_GET_ALL_FILMS, QUERY_GET_FILMS_BY_DATE_MODIFY
-from settings import POSTGRES_DSL, PACK_SIZE
+from settings import PostgresDsl, PACK_SIZE
 
 
 class PGLoader:
+    """Load data from postgres"""
 
     def __init__(self) -> None:
+        """Init."""
         self.pack_size = PACK_SIZE
 
-    def get_movies_from_database(self, mod_date: datetime):
-        with psycopg2.connect(**POSTGRES_DSL) as conn:
-            with conn.cursor(cursor_factory=DictCursor) as cur:
-                sql_query_templ = QUERY_TEMPLATE
-                print(sql_query_templ)
-                for fw_ids in self.__get_changes(cur, mod_date):
-                    print(fw_ids, tuple(fw_ids))
-                    sql_query = sql_query_templ.format(', '.join([f"'{i}'" for i in fw_ids]))
-                    print()
-                    print(sql_query)
-                    print()
-                    cur.execute(sql_query)
-                    yield cur.fetchall()
-
-    @contextmanager
-    def __pg_connect(self):
-        conn = self.__get_connection(**POSTGRES_DSL)
-        try:
-            yield conn
-        finally:
-            conn.close()
-
-    @contextmanager
-    def __pg_cursor(self, conn: _connection):
-        cur = conn.cursor()
-        try:
-            yield cur
-        finally:
-            cur.close()
-
     @backoff.on_exception(backoff.expo, BaseException)
-    def __get_connection(self, **dsl):
-        return psycopg2.connect(**dsl, cursor_factory=DictCursor)
+    def get_movies_from_database(self, mod_date: datetime):
+        """
+        Get new film from database.
+        :param mod_date: Date last update.
+        :return:
+        """
+        with psycopg2.connect(**PostgresDsl().dict()) as conn:
+            with conn.cursor(cursor_factory=DictCursor) as cur:
+                new_films = self._get_film_changes(cur, mod_date)
+                if new_films:
+                    sql_query_templ = QUERY_TEMPLATE
+                    for fw_ids in new_films:
+                        sql_query = sql_query_templ.format(', '.join([f"'{i}'" for i in fw_ids]))
+                        cur.execute(sql_query)
+                        yield cur.fetchall()
 
-    def __get_changes(self, cur, mod_date: datetime):
-
+    def _get_film_changes(self, cur, mod_date: datetime):
+        """
+        Get new film ids.
+        :param cur: Cursor.
+        :param mod_date: Date last update.
+        :return:
+        """
         if mod_date is None:
             sql_query = QUERY_GET_ALL_FILMS
         else:

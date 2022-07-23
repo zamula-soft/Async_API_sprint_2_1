@@ -1,7 +1,7 @@
 from elasticsearch import Elasticsearch, helpers
 import backoff
 
-from settings import ELASTICSEARCH_DSL
+from settings import ElascticSearchDsl
 
 
 FIELDS = [
@@ -21,12 +21,17 @@ FIELDS = [
 
 
 class ESLoader:
-    """"""
+    """Insert data to Elasticsearch."""
 
     def __init__(self) -> None:
-        self.__client = Elasticsearch(hosts=ELASTICSEARCH_DSL)
+        self.__client = Elasticsearch(hosts=[ElascticSearchDsl().dict()])
 
-    def save_data(self, data) -> None:
+    def save_movies(self, data) -> None:
+        """
+        Save data in Elasticsearch.
+        :param data: data for save.
+        :return:
+        """
         self.__check_connection()
         helpers.bulk(self.__client, generate_data(data))
 

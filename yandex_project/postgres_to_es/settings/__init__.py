@@ -1,1 +1,1 @@
-from .constants import POSTGRES_DSL, PACK_SIZE, ELASTICSEARCH_DSL, REDIS_HOST, REDIS_PORT
+from .constants import PostgresDsl, PACK_SIZE, ElascticSearchDsl, REDIS_HOST, REDIS_PORT
