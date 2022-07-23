@@ -1,0 +1,105 @@
+version: '3'
+services:
+  postgres:
+    container_name: postgres
+    platform: linux/amd64
+    build: ./db
+    image: postgres:14.3-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=app
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=movies_database
+    volumes:
+      - pgdata:/var/lib/postgresql/data/
+  service:
+    platform: linux/amd64
+    build:
+      context: app
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    volumes:
+      - web-static:/opt/app/static
+    depends_on:
+      - postgres
+  nginx:
+    platform: linux/arm64/v8
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./configs:/etc/nginx/conf.d:ro
+      - ./data:/data/:ro
+      - web-static:/opt/app/static
+    depends_on:
+      - service
+    ports:
+      - "80:80"
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    expose:
+      - "6379"
+  etl:
+    container_name: elt-proccess
+    build:
+      context: ./postgres_to_es
+    env_file:
+      - .env
+    command: python3 main.py
+    depends_on:
+      - postgres
+      - redis
+      - elasticsearch
+  fastapi:
+    container_name: fastapi
+    build:
+      context: ./fastapi-solution
+    env_file:
+      - .env
+    command: python3 main.py
+    volumes:
+      - fastapi-solution:/opt/app/fastapi-solution
+    ports:
+      - "8010:8010"
+    depends_on:
+      - etl
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.4
+    container_name: elasticsearch
+    restart: always
+    environment:
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms200m -Xmx200m
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - ./elasticsearch-data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+#  kibana:
+#    container_name: kibana
+#    image: docker.elastic.co/kibana/kibana:7.17.4
+#    restart: always
+#    environment:
+#      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200    # address of elasticsearch docker container which kibana will connect
+#    ports:
+#      - "5601:5601"
+#    depends_on:
+#      - elasticsearch
+
+
+volumes:
+  pgdata:
+  web-static:
+  fastapi-solution:
