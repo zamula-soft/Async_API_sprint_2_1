@@ -61,7 +61,7 @@ services:
       - .env
     command: python3 main.py
     volumes:
-      - fastapi-solution:/opt/app/fastapi-solution
+      - ./fastapi-solution:/opt/app/fastapi-solution
     ports:
       - "8010:8010"
     depends_on:
