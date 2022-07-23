@@ -16,12 +16,18 @@ class PGLoader:
         self.pack_size = PACK_SIZE
 
     def get_movies_from_database(self, mod_date: datetime):
-        with self.__pg_connect() as conn, self.__pg_cursor(conn) as cur:
-            sql_query_templ = QUERY_TEMPLATE
-            for fw_ids in self.__get_changes(cur, mod_date):
-                sql_query = sql_query_templ.format(tuple(fw_ids))
-                cur.execute(sql_query)
-                yield cur.fetchall()
+        with psycopg2.connect(**POSTGRES_DSL) as conn:
+            with conn.cursor(cursor_factory=DictCursor) as cur:
+                sql_query_templ = QUERY_TEMPLATE
+                print(sql_query_templ)
+                for fw_ids in self.__get_changes(cur, mod_date):
+                    print(fw_ids, tuple(fw_ids))
+                    sql_query = sql_query_templ.format(', '.join([f"'{i}'" for i in fw_ids]))
+                    print()
+                    print(sql_query)
+                    print()
+                    cur.execute(sql_query)
+                    yield cur.fetchall()
 
     @contextmanager
     def __pg_connect(self):
