@@ -11,6 +11,8 @@ def orjson_dumps(v, *, default):
 
 
 class Film(BaseModel):
+    """Film Model"""
+
     id: str
     title: str
     description: str

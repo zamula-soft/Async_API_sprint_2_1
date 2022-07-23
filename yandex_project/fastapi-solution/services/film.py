@@ -13,12 +13,24 @@ FILM_CACHE_EXPIRE_IN_SECONDS = 60 * 5  # 5 минут
 
 
 class FilmService:
-    def __init__(self, redis: Redis, elastic: AsyncElasticsearch):
+    """Service for get data from elasticsearch or redis"""
+
+    def __init__(self, redis: Redis, elastic: AsyncElasticsearch) -> None:
+        """
+        Init.
+        :param redis: connect to Redis
+        :param elastic: connect to Elasticsearch
+        """
         self.redis = redis
         self.elastic = elastic
 
     # get_by_id возвращает объект фильма. Он опционален, так как фильм может отсутствовать в базе
     async def get_by_id(self, film_id: str) -> Optional[Film]:
+        """
+        Get film by id.
+        :param film_id: Film id.
+        :return: Model Film
+        """
         # Пытаемся получить данные из кеша, потому что оно работает быстрее
         film = await self._film_from_cache(film_id)
         if not film:
@@ -32,6 +44,11 @@ class FilmService:
         return film
 
     async def _get_film_from_elastic(self, film_id: str) -> Optional[Film]:
+        """
+        Get film from elasticsearch by film id.
+        :param film_id: Film id.
+        :return: Model Film.
+        """
         try:
             doc = await self.elastic.get('movies', film_id)
         except NotFoundError:
@@ -39,6 +56,11 @@ class FilmService:
         return Film(**doc['_source'])
 
     async def _film_from_cache(self, film_id: str) -> Optional[Film]:
+        """
+        Get film from Redis.
+        :param film_id: Film id.
+        :return: Model Film
+        """
         # Пытаемся получить данные о фильме из кеша, используя команду get
         # https://redis.io/commands/get
         data = await self.redis.get(film_id)
@@ -49,7 +71,12 @@ class FilmService:
         film = Film.parse_raw(data)
         return film
 
-    async def _put_film_to_cache(self, film: Film):
+    async def _put_film_to_cache(self, film: Film) -> None:
+        """
+        Save film to Redis. Create cache.
+        :param film: Model Film
+        :return:
+        """
         # Сохраняем данные о фильме, используя команду set
         # Выставляем время жизни кеша — 5 минут
         # https://redis.io/commands/set
