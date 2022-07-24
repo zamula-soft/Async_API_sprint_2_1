@@ -6,4 +6,5 @@ es: Optional[AsyncElasticsearch] = None
 
 # Функция понадобится при внедрении зависимостей
 async def get_elastic() -> AsyncElasticsearch:
+    """Connect to elasticsearch"""
     return es

@@ -4,7 +4,7 @@ from typing import Generator, Iterable
 from psycopg2.extras import DictCursor
 
 
-from settings import ELASTICSEARCH_DSL
+from settings import ElascticSearchDsl
 
 
 FIELDS = [
@@ -18,16 +18,23 @@ FIELDS = [
     'writers_names',
     'writers',
     'actors',
+    'directors',
+    'genres',
 ]
 
 
 class ESLoader:
-    """"""
+    """Insert data to Elasticsearch."""
 
     def __init__(self) -> None:
-        self.__client = Elasticsearch(hosts=ELASTICSEARCH_DSL)
+        self.__client = Elasticsearch(hosts=[ElascticSearchDsl().dict()])
 
-    def save_data(self, data) -> None:
+    def save_movies(self, data) -> None:
+        """
+        Save data in Elasticsearch.
+        :param data: data for save.
+        :return:
+        """
         self.__check_connection()
         helpers.bulk(self.__client, generate_data(data))
 
@@ -50,7 +57,7 @@ def generate_genres(genres:Iterable[DictCursor])->Generator[dict, None, None]:
         }
 
 def generate_data(movies_list):
-    persons_fields = ['actors', 'writers']
+    persons_fields = ['actors', 'writers', 'directors', 'genres']
     for movie in movies_list:
         doc = {}
         for fld_name in FIELDS:
