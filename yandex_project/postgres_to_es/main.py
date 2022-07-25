@@ -20,7 +20,7 @@ def transfer_data():
 
     mod_date = status.get_status('mod_date')
     mod_date = mod_date.decode('utf-8') if mod_date else '2020-01-01 00:00:00'
-    new_date = f'{datetime.utcnow()()}'# тут надо часовой пояс указывать, иначе рассинхрон пойдет
+    new_date = f'{datetime.utcnow()}'# тут надо часовой пояс указывать, иначе рассинхрон пойдет
     logger.debug('film_work datetime before update : %s', mod_date)
     logger.debug('film_work datetime after update : %s', new_date)
 

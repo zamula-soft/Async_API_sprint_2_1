@@ -59,13 +59,14 @@ def generate_genres(genres: Iterable[DictCursor]) -> Generator[dict, None, None]
             '_index': 'genres',
             '_id': genre['id'],
             'name': genre['name'],
+            'id':genre['id']
         }
 
 
 def generate_data(movies_list):
     persons_fields = ['actors', 'writers', 'directors', 'genres']
     for movie in movies_list:
-        logger.debug('обновили или добавили movie', movie['id'])
+        logger.debug('обновили или добавили movie {0}'.format(movie['id']))
         doc = {}
         for fld_name in FIELDS:
             if fld_name in persons_fields:
@@ -89,5 +90,6 @@ def generate_people(persons: Iterable[Person]):
         yield {
             '_index': 'persons',
             '_id': pers.id,
-            'full_name': pers.full_name
+            'full_name': pers.full_name,
+            'id':pers.id
         }
