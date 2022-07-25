@@ -84,5 +84,6 @@ SELECT fw.id AS id
 '''
 
 QUERY_GET_NEW_GENRES = '''
-select distinct id, name from content.genre where created > %s;
+select distinct id, name from content.genre where modified > %s;
 '''
+
