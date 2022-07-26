@@ -12,7 +12,7 @@ logger = get_logger(__name__)
 FIELDS = [
     'id',
     'rating',
-    'genre',
+    # 'genre',
     'title',
     'description',
     'directors_names',
@@ -66,7 +66,8 @@ def generate_genres(genres: Iterable[DictCursor]) -> Generator[dict, None, None]
 def generate_data(movies_list):
     persons_fields = ['actors', 'writers', 'directors', 'genres']
     for movie in movies_list:
-        logger.debug('обновили или добавили movie {0}'.format(movie['id']))
+        # logger.debug('обновили или добавили movie {0}'.format(movie))
+        # logger.debug('обновили или добавили movie {0}'.format(movie['id']))
         doc = {}
         for fld_name in FIELDS:
             if fld_name in persons_fields:

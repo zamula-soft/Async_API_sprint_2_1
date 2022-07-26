@@ -1,8 +1,10 @@
+from flask import g
 from pydantic import Field, validator
 from typing import Any
 
 from .Datetime import DateTimeMixin
 from .Person import Person
+from .Genre import Genre
 
 
 class ElasticMovie(DateTimeMixin):
@@ -10,7 +12,7 @@ class ElasticMovie(DateTimeMixin):
     title: str = None
     description: str = None
     imdb_rating: float = Field(None, alias='rating')
-    genre: list = list()
+    genre: list = list[Genre]
     actors_names: list = list()
     writers_names: list = list()
     director:  list = list()
