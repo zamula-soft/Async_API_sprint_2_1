@@ -1,6 +1,6 @@
 FROM python:3.10
 
-WORKDIR opt/app/load_data
+WORKDIR opt/app/postgres_to_es
 
 COPY . .
 
