@@ -24,6 +24,51 @@ class PersonService:
         self.redis = redis
         self.elastic = elastic
 
+    async def get_persons(self, count: int, order: str = 'desc'):
+
+        elastic_query = {
+            "size": count,
+            "query": {
+                "match_all": {}
+            },
+            "_source": 'false',
+            "fields": [
+                {
+                    "field": "full_name"
+                },
+                {
+                    "field": "id"
+                },
+
+            ],
+            "sort": [
+                {
+                    "rating": {
+                        "order": order,
+                        "missing": "_last",
+                        "unmapped_type": "float"
+                    }
+                }
+            ]
+        }
+        res = []
+
+        resp = await self.elastic.search(index='persons', body=elastic_query)
+        print('Get_top_genre_top_movies resp---', resp)
+        # for e in resp:
+        #     print('e---',e)
+        top_movies = resp['hits']['hits']
+        res = []
+        for m in top_movies:
+            # print('m---',m)
+            res.append(
+                {
+                    'id': m['fields']['id'][0],
+                    'name': m['fields']['full_name'][0],
+                })
+
+        return res
+
     async def get_by_id(self, person_id: str) -> Optional[Person]:
         """
         Get person by id.
