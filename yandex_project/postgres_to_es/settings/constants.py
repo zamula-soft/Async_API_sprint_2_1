@@ -5,9 +5,9 @@ from pydantic import BaseSettings
 
 class PostgresDsl(BaseSettings):
 
-    dbname: str = os.environ.get('DB_NAME')
-    user: str = os.environ.get('DB_USER')
-    password: str = os.environ.get('DB_PASSWORD')
+    dbname: str = os.environ.get('DB_NAME','movies_database')
+    user: str = os.environ.get('DB_USER','app')
+    password: str = os.environ.get('DB_PASSWORD','123qwe')
     host: str = os.environ.get('DB_HOST', '127.0.0.1')
     port: int = int(os.environ.get('DB_PORT', 5432))
 
