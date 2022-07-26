@@ -43,6 +43,105 @@ class FilmService:
             await self._put_film_to_cache(film)
         return film
 
+    async def get_by_search_word(self, search_word: str, page_size=10, page=1):
+        elastic_query = {
+            "size": page_size,
+            "from": page*page_size,
+            "query": {
+                "match": {
+                    "title": {
+                        "query": search_word
+                    }
+                }
+            }
+        }
+        resp = await self.elastic.search(index='movies', body=elastic_query)
+        top_movies = resp['hits']['hits']
+        res = []
+        for m in top_movies:
+            data = m['_source']
+            res.append(
+                {'id': data['id'],
+                    'title': data['title'],
+                    'rating': data['rating'],
+
+                 })
+        return res
+
+    async def get_top_films(self, genre='', page_size: int = 10, page_number=0, order='asc'):
+        # print('вошли в get_top_genre_top_movies ---', locals())
+
+        elastic_query = {
+            "size": page_size,
+            "from": page_number*page_size,
+            "_source": 'false',
+            "fields": [
+                {
+                    "field": "genre"
+                },
+
+                {
+                    "field": "id"
+                },
+                {
+                    "field": "title"
+                },
+
+                {
+                    "field": "rating"
+                }
+            ],
+            "sort": [
+                {
+                    "rating": {
+                        "order": order,
+                        "missing": "_first",
+                        "unmapped_type": "float"
+                    }
+                }
+            ]
+        }
+
+        if genre:  # Если указан жанр, фильтруем по айди жанра
+            elastic_query["query"] = {
+                "term": {
+                    "genres.id.keyword": {
+                        "value": genre,
+                        "boost": 1.0
+                    }
+                }
+            }
+
+        resp = await self.elastic.search(index='movies', body=elastic_query)
+        total_entities_count = resp['hits']['total']['value']
+        print('total_entities_count--', total_entities_count)
+
+        # Считаем пагинацию, исходя из кол-ва результатов
+        last_page = int(total_entities_count) // page_size - 1 if int(
+            total_entities_count) % page_size == 0 else int(total_entities_count) // page_size
+        next_page = page_number + 1 if page_number < last_page else None
+        prev_page = page_number - 1 if (page_number-1) >= 0 else None
+
+        # добавляем ее в начало каждого ответа (так вроде другие ребята делали)
+        pagination_info = {'pagination': {
+            'first': 0, 'last': last_page,
+            'prev': prev_page, 'next': next_page}}
+
+        res = [pagination_info]
+
+        top_movies = resp['hits']['hits']
+        for m in top_movies:
+            print('movie ---', m)
+            res.append(
+                {
+                    'id': m['fields']['id'][0],
+                    'title': m['fields']['title'][0],
+                    'rating': m['fields']['rating'][0],
+
+                })
+
+        return res
+
     async def _get_film_from_elastic(self, film_id: str) -> Optional[Film]:
         """
         Get film from elasticsearch by film id.
@@ -90,3 +189,5 @@ def get_film_service(
         elastic: AsyncElasticsearch = Depends(get_elastic),
 ) -> FilmService:
     return FilmService(redis, elastic)
+
+
