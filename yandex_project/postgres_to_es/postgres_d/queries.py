@@ -1,4 +1,4 @@
-QUERY_TEMPLATE = '''
+OLD_WORKING_QUERY_TEMPLATE = '''
 SELECT
     fw.id,
     fw.rating AS rating,
@@ -11,6 +11,79 @@ SELECT
     ARRAY_AGG(DISTINCT p.full_name) FILTER (
         WHERE pfw.role = 'actor'
     ) AS actors_names,
+    ARRAY_AGG(DISTINCT p.full_name) FILTER (
+        WHERE pfw.role = 'writer'
+    ) AS writers_names,
+    COALESCE (
+        json_agg(
+            DISTINCT jsonb_build_object(
+                'id', p.id,
+                'name', p.full_name
+            )
+        ) FILTER (WHERE pfw.role = 'actor'),
+        '[]'
+    ) as actors,
+    COALESCE (
+        json_agg(
+            DISTINCT jsonb_build_object(
+                'id', p.id,
+                'name', p.full_name
+            )
+        ) FILTER (WHERE pfw.role = 'writer'),
+        '[]'
+    ) as writers,
+    COALESCE (
+        json_agg(
+            DISTINCT jsonb_build_object(
+                'id', p.id,
+                'name', p.full_name
+            )
+        ) FILTER (WHERE pfw.role = 'director'),
+        '[]'
+    ) as directors,
+    COALESCE (
+        json_agg(
+            DISTINCT jsonb_build_object(
+                'id', g.id,
+                'name', g.name
+            )
+        ),
+        '[]'
+    ) as genres,
+    fw.modified
+        FROM content.film_work AS fw
+            LEFT JOIN content.person_film_work AS pfw ON pfw.film_work_id = fw.id
+            LEFT JOIN content.person AS p ON p.id = pfw.person_id
+            LEFT JOIN content.genre_film_work AS gfw ON gfw.film_work_id = fw.id
+            LEFT JOIN content.genre AS g ON g.id = gfw.genre_id
+        WHERE fw.id in ({})
+        GROUP BY fw.id
+        ORDER BY fw.modified;
+'''
+
+QUERY_TEMPLATE = '''
+SELECT
+    fw.id,
+    fw.rating AS rating,
+    COALESCE (
+        json_agg(
+            DISTINCT jsonb_build_object(
+                'id', g.id,
+                'name', g.name
+            )
+        ) ,
+        '[]'
+    ) as genres,
+    
+    fw.title,
+    fw.description,
+    ARRAY_AGG(DISTINCT p.full_name) FILTER (
+        WHERE pfw.role = 'director'
+    ) AS directors_names,
+    ARRAY_AGG(DISTINCT p.full_name) FILTER (
+        WHERE pfw.role = 'actor'
+    ) AS actors_names,
+    
     ARRAY_AGG(DISTINCT p.full_name) FILTER (
         WHERE pfw.role = 'writer'
     ) AS writers_names,
@@ -82,3 +155,8 @@ SELECT fw.id AS id
                 FROM content.genre AS g
                 WHERE g.modified > '{mod_date}');
 '''
+
+QUERY_GET_NEW_GENRES = '''
+select distinct id, name from content.genre where modified > %s;
+'''
+

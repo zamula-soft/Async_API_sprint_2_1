@@ -15,8 +15,8 @@ class Film(BaseModel):
 
     id: str
     title: str
-    description: str
-    rating: float
+    description: Optional[str]
+    rating: Optional[float]
     actors: Optional[list]
     genres: Optional[list]
     directors: Optional[list]

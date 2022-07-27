@@ -43,6 +43,46 @@ class FilmService:
             await self._put_film_to_cache(film)
         return film
 
+    async def get_by_search_word(self, search_word: str, page_size: int = 10, page_number: int = 0):
+
+        elastic_query = {
+            "size": page_size,
+            "from": page_number * page_size,
+            "query": {
+                "match": {
+                    "title": {
+                        "query": search_word
+                    }
+                }
+            }
+        }
+        resp = await self.elastic.search(index='movies', body=elastic_query)
+
+        return self._get_result(resp, page_size, page_number)
+
+    async def get_films(self, page_size: int = 10, page_number: int = 0, order_by: str = '-rating'):
+
+        order = 'asc'
+        if order_by.startswith('-'):
+            order = 'desc'
+            order_by = order_by[1:]
+
+        elastic_query = {
+            "size": page_size,
+            "from": page_number * page_size,
+            "sort": [
+                {
+                    order_by: {
+                        "order": order,
+                    }
+                }
+            ]
+        }
+
+        resp = await self.elastic.search(index='movies', body=elastic_query)
+
+        return self._get_result(resp, page_size, page_number)
+
     async def _get_film_from_elastic(self, film_id: str) -> Optional[Film]:
         """
         Get film from elasticsearch by film id.
@@ -83,6 +123,31 @@ class FilmService:
         # pydantic позволяет сериализовать модель в json
         await self.redis.set(film.id, film.json(), expire=FILM_CACHE_EXPIRE_IN_SECONDS)
 
+    def _create_pagination(self, resp, page_size, page_number):
+        total_entities_count = resp['hits']['total']['value']
+        last_page = int(total_entities_count) // page_size - 1 if int(
+            total_entities_count) % page_size == 0 else int(total_entities_count) // page_size
+        next_page = page_number + 1 if page_number < last_page else None
+        prev_page = page_number - 1 if (page_number-1) >= 0 else None
+
+        pagination_info = {'first': 0, 'last': last_page}
+
+        if prev_page:
+            pagination_info['prev'] = prev_page
+        if next_page:
+            pagination_info['next'] = next_page
+
+        return {'pagination': pagination_info, 'result': []}
+
+    def _get_result(self, resp, page_size, page_number):
+        result = self._create_pagination(resp, page_size, page_number)
+
+        top_movies = resp['hits']['hits']
+        for movie in top_movies:
+            result['result'].append(Film(**movie['_source']))
+
+        return result
+
 
 @lru_cache()
 def get_film_service(
@@ -90,3 +155,5 @@ def get_film_service(
         elastic: AsyncElasticsearch = Depends(get_elastic),
 ) -> FilmService:
     return FilmService(redis, elastic)
+
+
