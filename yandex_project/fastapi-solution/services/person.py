@@ -58,7 +58,7 @@ class PersonService:
     ):
         query = {
             "match": {
-               f"{role}s.id": person_id
+               f"{role}s.id.keyword": person_id
              }
            }
 
@@ -66,9 +66,9 @@ class PersonService:
             query = {
                 "bool": {
                     "should": [
-                        {"match": {"writers.id": person_id}},
-                        {"match": {"actors.id": person_id}},
-                        {"match": {"directors.id": person_id}},
+                        {"match": {"writers.id.keyword": person_id}},
+                        {"match": {"actors.id.keyword": person_id}},
+                        {"match": {"directors.id.keyword": person_id}},
                     ],
                 },
             }
