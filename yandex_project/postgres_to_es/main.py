@@ -27,7 +27,7 @@ def transfer_data():
     if mod_date == '2020-01-01 00:00:00':
         es_loader.create_mapping_films()
 
-    for movies in pg_loader.get_movies_from_database(mod_date):
+    for movies in pg_loader.get_from_database(mod_date):
         es_loader.save_movies(movies)
 
     status.set_status('mod_date', new_date)
