@@ -2,14 +2,16 @@ from functools import lru_cache
 from typing import Optional
 
 from aioredis import Redis
-from db.elastic import get_elastic
-from db.redis import get_redis
 from elasticsearch import AsyncElasticsearch, NotFoundError
 from fastapi import Depends
+
+from db.elastic import get_elastic
+from db.redis import get_redis
+from .result import get_result
 from models.genre import Genre
 from models.film import Film
 
-GENRE_CACHE_EXPIRE_IN_SECONDS = 60 * 5  # 5 минут
+GENRE_CACHE_EXPIRE_IN_SECONDS = 60 * 5
 
 
 class GenreService:
@@ -44,7 +46,7 @@ class GenreService:
 
         resp = await self.elastic.search(index='genres', body=elastic_query)
 
-        return self._get_result(resp, page_size, page_number, Genre)
+        return get_result(resp=resp, page_size=page_size, page_number=page_number, model=Genre)
 
     async def get_movies_by_genre(
             self, genre_id: str = '', page_size: int = 10, page_number: int = 0, order_by: str = '-rating'):
@@ -73,7 +75,7 @@ class GenreService:
 
         resp = await self.elastic.search(index='movies', body=elastic_query)
 
-        return self._get_result(resp, page_size, page_number, Film)
+        return get_result(resp, page_size, page_number, Film)
 
     async def get_by_id(self, genre_id: str) -> Optional[Genre]:
         """
@@ -81,13 +83,10 @@ class GenreService:
         :param genre_id: genre.id.
         :return: Model Genre
         """
-        print('GenreService  get_by_id. genre_id =', genre_id)
         genre = await self._genre_from_cache(genre_id)
         if not genre:
             genre = await self._get_genre_from_elastic(genre_id)
-            print('genre from elastic --- ', genre)
             if not genre:
-                print('NO GENRE!!')
                 return None
             await self._put_genre_to_cache(genre)
         return genre
@@ -123,32 +122,6 @@ class GenreService:
         :return:
         """
         await self.redis.set(genre.id, genre.json(), expire=GENRE_CACHE_EXPIRE_IN_SECONDS)
-
-
-    def _create_pagination(self, resp, page_size, page_number):
-        total_entities_count = resp['hits']['total']['value']
-        last_page = int(total_entities_count) // page_size - 1 if int(
-            total_entities_count) % page_size == 0 else int(total_entities_count) // page_size
-        next_page = page_number + 1 if page_number < last_page else None
-        prev_page = page_number - 1 if (page_number-1) >= 0 else None
-
-        pagination_info = {'first': 0, 'last': last_page}
-
-        if prev_page:
-            pagination_info['prev'] = prev_page
-        if next_page:
-            pagination_info['next'] = next_page
-
-        return {'pagination': pagination_info, 'result': []}
-
-    def _get_result(self, resp, page_size, page_number, model):
-        result = self._create_pagination(resp, page_size, page_number)
-
-        items = resp['hits']['hits']
-        for item in items:
-            result['result'].append(model(**item['_source']))
-
-        return result
 
 
 @lru_cache()

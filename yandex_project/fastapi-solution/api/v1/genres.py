@@ -3,7 +3,8 @@ from http import HTTPStatus
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 from pydantic.schema import Optional, List, Dict
-from services.genres import GenreService, get_genre_service
+
+from services import GenreService, get_genre_service
 
 router = APIRouter()
 

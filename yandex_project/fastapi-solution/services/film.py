@@ -8,6 +8,7 @@ from fastapi import Depends
 from db.elastic import get_elastic
 from db.redis import get_redis
 from models.film import Film
+from .result import get_result
 
 FILM_CACHE_EXPIRE_IN_SECONDS = 60 * 5  # 5 минут
 
@@ -58,7 +59,7 @@ class FilmService:
         }
         resp = await self.elastic.search(index='movies', body=elastic_query)
 
-        return self._get_result(resp, page_size, page_number)
+        return get_result(resp, page_size, page_number, Film)
 
     async def get_films(self, page_size: int = 10, page_number: int = 0, order_by: str = '-rating'):
 
@@ -81,7 +82,7 @@ class FilmService:
 
         resp = await self.elastic.search(index='movies', body=elastic_query)
 
-        return self._get_result(resp, page_size, page_number)
+        return get_result(resp, page_size, page_number, Film)
 
     async def _get_film_from_elastic(self, film_id: str) -> Optional[Film]:
         """
@@ -122,31 +123,6 @@ class FilmService:
         # https://redis.io/commands/set
         # pydantic позволяет сериализовать модель в json
         await self.redis.set(film.id, film.json(), expire=FILM_CACHE_EXPIRE_IN_SECONDS)
-
-    def _create_pagination(self, resp, page_size, page_number):
-        total_entities_count = resp['hits']['total']['value']
-        last_page = int(total_entities_count) // page_size - 1 if int(
-            total_entities_count) % page_size == 0 else int(total_entities_count) // page_size
-        next_page = page_number + 1 if page_number < last_page else None
-        prev_page = page_number - 1 if (page_number-1) >= 0 else None
-
-        pagination_info = {'first': 0, 'last': last_page}
-
-        if prev_page:
-            pagination_info['prev'] = prev_page
-        if next_page:
-            pagination_info['next'] = next_page
-
-        return {'pagination': pagination_info, 'result': []}
-
-    def _get_result(self, resp, page_size, page_number):
-        result = self._create_pagination(resp, page_size, page_number)
-
-        top_movies = resp['hits']['hits']
-        for movie in top_movies:
-            result['result'].append(Film(**movie['_source']))
-
-        return result
 
 
 @lru_cache()
