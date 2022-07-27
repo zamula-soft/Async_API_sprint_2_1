@@ -28,9 +28,15 @@ class Films(BaseModel):
 async def get_all_movies(
         page_size: int = Query(ge=1, le=100, default=10),
         page_number: int = Query(default=0),
-        sort: str = Query(default='-rating', regex='^-?rating'),
+        sort: str = Query(
+            default='-rating',
+            regex='^-?rating$|^-?title$',
+            description='You cane use only: rating, -rating, title, -title'),
         film_service: FilmService = Depends(get_film_service),
 ) -> Films:
+
+    if 'title' in sort:
+        sort += '.keyword'
 
     films = await film_service.get_films(page_size=page_size, page_number=page_number, order_by=sort)
 

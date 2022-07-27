@@ -1,3 +1,3 @@
-from .Person import Person
-from .Genre import Genre
-from .Film import ElasticMovie
+from .person import Person
+from .genre import Genre
+from .film import ElasticMovie

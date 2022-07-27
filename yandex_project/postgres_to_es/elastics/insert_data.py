@@ -51,6 +51,175 @@ class ESLoader:
     def save_genres(self, genres: Iterable[Genre]) -> None:
         helpers.bulk(self.__client, generate_genres(genres))
 
+    def create_mapping_films(self):
+        mapping = {"mappings": {
+            "properties": {
+                "actors": {
+                    "properties": {
+                        "id": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            },
+                        },
+                        "name": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        }
+                    }
+                },
+                "actors_names": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "description": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "directors": {
+                    "properties": {
+                        "id": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        },
+                        "name": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        }
+                    }
+                },
+                "directors_names": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "genre": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "genres": {
+                    "properties":
+                        {
+                            "id": {
+                                "type": "text",
+                                "fields": {
+                                    "keyword": {
+                                        "type": "keyword",
+                                        "ignore_above": 256
+                                    }
+                                }
+                            },
+                            "name": {
+                                "type": "text",
+                                "fields": {
+                                    "keyword": {
+                                        "type": "keyword",
+                                        "ignore_above": 256
+                                    }
+                                }
+                            }
+                        }
+                },
+                "id": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "rating": {
+                    "type": "float"
+                },
+                "title": {
+                    "type": "text",
+                    "fields": {
+                        "keyword":
+                            {"type": "keyword",
+                             "ignore_above": 256
+                             }
+                    }
+                },
+                "writers": {
+                    "properties": {
+                        "id": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        },
+                        "name": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        }
+                    }
+                },
+                "writers_names": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                }
+            }
+        }
+        }
+
+        logger.debug(mapping)
+
+        self.__check_connection()
+        self.__client.indices.delete(index="movies")
+        self.__client.indices.create(index="movies", body=mapping)
+        # helpers.bulk(self.__client, mapping, index="movies")
+
 
 def generate_genres(genres: Iterable[DictCursor]) -> Generator[dict, None, None]:
     for genre in genres:
@@ -59,7 +228,7 @@ def generate_genres(genres: Iterable[DictCursor]) -> Generator[dict, None, None]
             '_index': 'genres',
             '_id': genre['id'],
             'name': genre['name'],
-            'id':genre['id']
+            'id': genre['id']
         }
 
 
@@ -78,6 +247,12 @@ def generate_data(movies_list):
             else:
                 doc[fld_name] = movie[fld_name]
 
+        logger.debug({
+            '_index': 'movies',
+            '_id': movie['id'],
+            **doc,
+        })
+
         yield {
             '_index': 'movies',
             '_id': movie['id'],
@@ -92,5 +267,5 @@ def generate_people(persons: Iterable[Person]):
             '_index': 'persons',
             '_id': pers.id,
             'full_name': pers.full_name,
-            'id':pers.id
+            'id': pers.id
         }
