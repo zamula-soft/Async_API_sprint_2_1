@@ -6,6 +6,7 @@ from psycopg2.extras import DictCursor
 from models import Person, Genre
 from settings import ElascticSearchDsl
 from utils import get_logger
+from elastics.mapping import MAPPING_FILMS
 
 logger = get_logger(__name__)
 
@@ -52,172 +53,12 @@ class ESLoader:
         helpers.bulk(self.__client, generate_genres(genres))
 
     def create_mapping_films(self):
-        mapping = {"mappings": {
-            "properties": {
-                "actors": {
-                    "properties": {
-                        "id": {
-                            "type": "text",
-                            "fields": {
-                                "keyword": {
-                                    "type": "keyword",
-                                    "ignore_above": 256
-                                }
-                            },
-                        },
-                        "name": {
-                            "type": "text",
-                            "fields": {
-                                "keyword": {
-                                    "type": "keyword",
-                                    "ignore_above": 256
-                                }
-                            }
-                        }
-                    }
-                },
-                "actors_names": {
-                    "type": "text",
-                    "fields": {
-                        "keyword": {
-                            "type": "keyword",
-                            "ignore_above": 256
-                        }
-                    }
-                },
-                "description": {
-                    "type": "text",
-                    "fields": {
-                        "keyword": {
-                            "type": "keyword",
-                            "ignore_above": 256
-                        }
-                    }
-                },
-                "directors": {
-                    "properties": {
-                        "id": {
-                            "type": "text",
-                            "fields": {
-                                "keyword": {
-                                    "type": "keyword",
-                                    "ignore_above": 256
-                                }
-                            }
-                        },
-                        "name": {
-                            "type": "text",
-                            "fields": {
-                                "keyword": {
-                                    "type": "keyword",
-                                    "ignore_above": 256
-                                }
-                            }
-                        }
-                    }
-                },
-                "directors_names": {
-                    "type": "text",
-                    "fields": {
-                        "keyword": {
-                            "type": "keyword",
-                            "ignore_above": 256
-                        }
-                    }
-                },
-                "genre": {
-                    "type": "text",
-                    "fields": {
-                        "keyword": {
-                            "type": "keyword",
-                            "ignore_above": 256
-                        }
-                    }
-                },
-                "genres": {
-                    "properties":
-                        {
-                            "id": {
-                                "type": "text",
-                                "fields": {
-                                    "keyword": {
-                                        "type": "keyword",
-                                        "ignore_above": 256
-                                    }
-                                }
-                            },
-                            "name": {
-                                "type": "text",
-                                "fields": {
-                                    "keyword": {
-                                        "type": "keyword",
-                                        "ignore_above": 256
-                                    }
-                                }
-                            }
-                        }
-                },
-                "id": {
-                    "type": "text",
-                    "fields": {
-                        "keyword": {
-                            "type": "keyword",
-                            "ignore_above": 256
-                        }
-                    }
-                },
-                "rating": {
-                    "type": "float"
-                },
-                "title": {
-                    "type": "text",
-                    "fields": {
-                        "keyword":
-                            {"type": "keyword",
-                             "ignore_above": 256
-                             }
-                    }
-                },
-                "writers": {
-                    "properties": {
-                        "id": {
-                            "type": "text",
-                            "fields": {
-                                "keyword": {
-                                    "type": "keyword",
-                                    "ignore_above": 256
-                                }
-                            }
-                        },
-                        "name": {
-                            "type": "text",
-                            "fields": {
-                                "keyword": {
-                                    "type": "keyword",
-                                    "ignore_above": 256
-                                }
-                            }
-                        }
-                    }
-                },
-                "writers_names": {
-                    "type": "text",
-                    "fields": {
-                        "keyword": {
-                            "type": "keyword",
-                            "ignore_above": 256
-                        }
-                    }
-                }
-            }
-        }
-        }
 
-        logger.debug(mapping)
+        logger.debug(MAPPING_FILMS)
 
         self.__check_connection()
         self.__client.indices.delete(index="movies")
-        self.__client.indices.create(index="movies", body=mapping)
+        self.__client.indices.create(index="movies", body=MAPPING_FILMS)
         # helpers.bulk(self.__client, mapping, index="movies")
 
 
