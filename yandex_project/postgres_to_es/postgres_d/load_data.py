@@ -5,11 +5,8 @@ from psycopg2.extras import DictCursor
 from settings import PACK_SIZE, PostgresDsl
 from utils import logger
 from postgres_d.queries import (
-    QUERY_GET_FILMS_BY_DATE_MODIFY,
     QUERY_GET_GENRES,
-    QUERY_TEMPLATE,
-    QUERY_GET_PERSONS_BY_DATE_MODIFY,
-    QUERY_GET_GENRES_BY_DATE_MODIFY,
+    QUERY_GET_FILMS,
     QUERY_GET_PERSONS,
 )
 
@@ -23,17 +20,14 @@ class PGLoader:
         self.queries = {
             'movies':
                 {
-                    'query_by_date_modify': QUERY_GET_FILMS_BY_DATE_MODIFY,
-                    'query_get_data': QUERY_TEMPLATE,
+                    'query_get_data': QUERY_GET_FILMS,
                 },
             'genres':
                 {
-                    'query_by_date_modify': QUERY_GET_GENRES_BY_DATE_MODIFY,
                     'query_get_data': QUERY_GET_GENRES
                 },
             'persons':
                 {
-                    'query_by_date_modify': QUERY_GET_PERSONS_BY_DATE_MODIFY,
                     'query_get_data': QUERY_GET_PERSONS
                 }
             }
@@ -49,40 +43,10 @@ class PGLoader:
             with conn.cursor(cursor_factory=DictCursor) as cur:
 
                 logger.debug(f'start get data from postgres for {type_data}')
+
                 query = self.queries.get(type_data)
-                new_data = self._get_changes(cur=cur, mod_date=mod_date, query=query['query_by_date_modify'])
+                cur.execute(query['query_get_data'].format(date_modify=mod_date))
 
-                if new_data:
-                    logger.debug('find data for update')
-                    sql_query_templ = query['query_get_data']
-                    for ids in new_data:
-                        sql_query = sql_query_templ.format(', '.join([f"'{i}'" for i in ids]))
-                        cur.execute(sql_query)
+                while row := cur.fetchmany(self.pack_size):
+                    yield row
 
-                        yield cur.fetchall()
-
-    def _get_changes(self, cur, mod_date: str, query: str):
-        """
-        Get new film ids.
-        :param cur: Cursor.
-        :param mod_date: Date last update.
-        :return:
-        """
-
-        logger.debug('\nstart find new data')
-
-        sql_query = query.format(date_modify=mod_date)
-
-        cur.execute(sql_query)
-
-        ids = []
-        while True:
-            ids.clear()
-            result = cur.fetchmany(self.pack_size)
-            if not result:
-                return []
-
-            for row in result:
-                ids.append(row['id'])
-
-            yield ids
