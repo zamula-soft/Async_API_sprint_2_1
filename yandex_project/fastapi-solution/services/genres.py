@@ -61,7 +61,7 @@ class GenreService:
             "from": page_number * page_size,
             "query": {
                  "match": {
-                   "genres.id": genre_id
+                   "genres.id.keyword": genre_id
                  }
                },
             "sort": [
