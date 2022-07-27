@@ -7,6 +7,7 @@ from db.redis import get_redis
 from elasticsearch import AsyncElasticsearch, NotFoundError
 from fastapi import Depends
 from models.genre import Genre
+from models.film import Film
 
 GENRE_CACHE_EXPIRE_IN_SECONDS = 60 * 5  # 5 минут
 
@@ -43,7 +44,7 @@ class GenreService:
 
         resp = await self.elastic.search(index='genres', body=elastic_query)
 
-        return self._get_result(resp, page_size, page_number)
+        return self._get_result(resp, page_size, page_number, Genre)
 
     async def get_movies_by_genre(
             self, genre_id: str = '', page_size: int = 10, page_number: int = 0, order_by: str = '-rating'):
@@ -57,12 +58,10 @@ class GenreService:
             "size": page_size,
             "from": page_number * page_size,
             "query": {
-                "match": {
-                    "genre.id.keyword": {
-                        "query": genre_id
-                    }
-                }
-            },
+                 "match": {
+                   "genres.id": genre_id
+                 }
+               },
             "sort": [
                 {
                     order_by: {
@@ -74,7 +73,7 @@ class GenreService:
 
         resp = await self.elastic.search(index='movies', body=elastic_query)
 
-        return self._get_result(resp, page_size, page_number)
+        return self._get_result(resp, page_size, page_number, Film)
 
     async def get_by_id(self, genre_id: str) -> Optional[Genre]:
         """
@@ -142,16 +141,14 @@ class GenreService:
 
         return {'pagination': pagination_info, 'result': []}
 
-    def _get_result(self, resp, page_size, page_number):
+    def _get_result(self, resp, page_size, page_number, model):
         result = self._create_pagination(resp, page_size, page_number)
 
-        top_movies = resp['hits']['hits']
-        for movie in top_movies:
-            result['result'].append(Genre(**movie['_source']))
+        items = resp['hits']['hits']
+        for item in items:
+            result['result'].append(model(**item['_source']))
 
         return result
-
-
 
 
 @lru_cache()
