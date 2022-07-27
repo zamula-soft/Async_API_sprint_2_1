@@ -27,11 +27,11 @@ class Films(BaseModel):
 @router.get('/')
 async def get_all_movies(
         page_size: int = Query(ge=1, le=100, default=10),
-        page_number: int = Query(default=0),
+        page_number: int = Query(default=0, ge=0),
         sort: str = Query(
             default='-rating',
-            regex='^-?rating$|^-?title$',
-            description='You cane use only: rating, -rating, title, -title'),
+            regex='^-?(rating|title)',
+            description='You can use only: rating, -rating, title, -title'),
         film_service: FilmService = Depends(get_film_service),
 ) -> Films:
 
@@ -47,7 +47,7 @@ async def get_all_movies(
 async def search_movie_by_word(
         search_word: str,
         page_size: int = Query(ge=1, le=100, default=10),
-        page_number: int = 0,
+        page_number: int = Query(default=0, ge=0),
         film_service: FilmService = Depends(get_film_service),
 ) -> Films:
     films = await film_service.get_by_search_word(search_word, page_size=page_size, page_number=page_number)
