@@ -5,10 +5,8 @@ from psycopg2.extras import DictCursor
 
 from models import Person, Genre
 from settings import ElascticSearchDsl
-from utils import get_logger
+from utils import logger
 from elastics.mapping import MAPPING_FILMS
-
-logger = get_logger(__name__)
 
 FIELDS = [
     'id',

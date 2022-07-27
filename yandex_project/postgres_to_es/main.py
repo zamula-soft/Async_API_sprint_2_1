@@ -4,9 +4,7 @@ from time import sleep
 from elastics import ESLoader
 from postgres_d import PGLoader
 from redis_work import Status
-from utils import get_logger
-
-logger = get_logger(__name__)
+from utils import logger
 
 
 def transfer_data():
@@ -20,7 +18,7 @@ def transfer_data():
 
     mod_date = status.get_status('mod_date')
     mod_date = mod_date.decode('utf-8') if mod_date else '2020-01-01 00:00:00'
-    new_date = f'{datetime.utcnow()}'# тут надо часовой пояс указывать, иначе рассинхрон пойдет
+    new_date = f'{datetime.utcnow()}'
     logger.debug('film_work datetime before update : %s', mod_date)
     logger.debug('film_work datetime after update : %s', new_date)
 

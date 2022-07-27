@@ -33,6 +33,7 @@ class PGLoader:
                         sql_query = sql_query_templ.format(
                             ', '.join([f"'{i}'" for i in fw_ids]))
                         cur.execute(sql_query)
+
                         yield cur.fetchall()
 
     def _get_changes(self, cur, mod_date: str, query: str):
