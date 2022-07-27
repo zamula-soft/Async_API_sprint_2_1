@@ -20,8 +20,8 @@ def transfer_data():
     mod_date = status.get_status('mod_date')
     mod_date = mod_date.decode('utf-8') if mod_date else '2020-01-01 00:00:00'
 
-    logger.debug('film_work datetime before update : %s', mod_date)
-    logger.debug('film_work datetime after update : %s', new_date)
+    logger.debug(f'film_work datetime before update: {mod_date}\n'
+                 f'film_work datetime after update: {new_date}')
 
     if mod_date == '2020-01-01 00:00:00':
         es_loader.create_mapping_films()
@@ -40,7 +40,7 @@ if __name__ == '__main__':
     logger.debug('\n\nStart work\n\n')
 
     while True:
-        logger.debug('\n\nFind changes')
+        logger.debug('\n\n\nFind changes')
         transfer_data()
         sleep(10)
         

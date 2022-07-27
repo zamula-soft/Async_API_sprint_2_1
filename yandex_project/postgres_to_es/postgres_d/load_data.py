@@ -47,15 +47,16 @@ class PGLoader:
         """
         with psycopg2.connect(**PostgresDsl().dict()) as conn:
             with conn.cursor(cursor_factory=DictCursor) as cur:
+
                 logger.debug(f'start get data from postgres for {type_data}')
                 query = self.queries.get(type_data)
-                new_data = self._get_changes(cur, mod_date, query['query_by_date_modify'])
+                new_data = self._get_changes(cur=cur, mod_date=mod_date, query=query['query_by_date_modify'])
+
                 if new_data:
                     logger.debug('find data for update')
                     sql_query_templ = query['query_get_data']
-                    for fw_ids in new_data:
-                        sql_query = sql_query_templ.format(
-                            ', '.join([f"'{i}'" for i in fw_ids]))
+                    for ids in new_data:
+                        sql_query = sql_query_templ.format(', '.join([f"'{i}'" for i in ids]))
                         cur.execute(sql_query)
 
                         yield cur.fetchall()
@@ -68,7 +69,7 @@ class PGLoader:
         :return:
         """
 
-        logger.debug('start find new data')
+        logger.debug('\nstart find new data')
 
         sql_query = query.format(date_modify=mod_date)
 
