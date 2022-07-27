@@ -57,7 +57,7 @@ async def genre_details(genre_id: str, genre_service: GenreService = Depends(get
 
 
 @router.get('/{genre_id}/films/', response_model=Films)
-async def genre_details(
+async def get_films_by_genre(
         genre_id: str,
         page_size: int = Query(ge=1, le=100, default=10),
         page_number: int = Query(default=0, ge=0),

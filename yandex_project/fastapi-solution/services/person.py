@@ -8,6 +8,8 @@ from fastapi import Depends
 from db.elastic import get_elastic
 from db.redis import get_redis
 from models.person import Person
+from models.film import Film
+from .result import get_result
 
 PERSON_CACHE_EXPIRE_IN_SECONDS = 60 * 5  # 5 минут
 
@@ -24,50 +26,74 @@ class PersonService:
         self.redis = redis
         self.elastic = elastic
 
-    async def get_persons(self, count: int, order: str = 'desc'):
+    async def get_persons(self, page_size: int = 10, page_number: int = 0, order_by: str = '-full_name'):
+
+        order = 'asc'
+        if order_by.startswith('-'):
+            order = 'desc'
 
         elastic_query = {
-            "size": count,
-            "query": {
-                "match_all": {}
-            },
-            "_source": 'false',
-            "fields": [
-                {
-                    "field": "full_name"
-                },
-                {
-                    "field": "id"
-                },
-
-            ],
+            "size": page_size,
+            "from": page_number * page_size,
             "sort": [
                 {
-                    "rating": {
+                    "full_name.keyword": {
                         "order": order,
-                        "missing": "_last",
-                        "unmapped_type": "float"
                     }
                 }
             ]
         }
-        res = []
 
         resp = await self.elastic.search(index='persons', body=elastic_query)
-        print('Get_top_genre_top_movies resp---', resp)
-        # for e in resp:
-        #     print('e---',e)
-        top_movies = resp['hits']['hits']
-        res = []
-        for m in top_movies:
-            # print('m---',m)
-            res.append(
-                {
-                    'id': m['fields']['id'][0],
-                    'name': m['fields']['full_name'][0],
-                })
 
-        return res
+        return get_result(resp=resp, page_size=page_size, page_number=page_number, model=Person)
+
+    async def get_movies_by_person(
+            self,
+            person_id: str = '',
+            page_size: int = 10,
+            page_number: int = 0,
+            order_by: str = '-rating',
+            role: str = '',
+    ):
+        query = {
+            "match": {
+               f"{role}s.id": person_id
+             }
+           }
+
+        if not role:
+            query = {
+                "bool": {
+                    "should": [
+                        {"match": {"writers.id": person_id}},
+                        {"match": {"actors.id": person_id}},
+                        {"match": {"directors.id": person_id}},
+                    ],
+                },
+            }
+
+        order = 'asc'
+        if order_by.startswith('-'):
+            order = 'desc'
+            order_by = order_by[1:]
+
+        elastic_query = {
+            "size": page_size,
+            "from": page_number * page_size,
+            "query": query,
+            "sort": [
+                {
+                    order_by: {
+                        "order": order,
+                    }
+                }
+            ]
+        }
+
+        resp = await self.elastic.search(index='movies', body=elastic_query)
+
+        return get_result(resp, page_size, page_number, Film)
 
     async def get_by_id(self, person_id: str) -> Optional[Person]:
         """
@@ -75,13 +101,10 @@ class PersonService:
         :param person_id: person id.
         :return: Model Person
         """
-        print('PersonService  get_by_id. person_id =', person_id)
         person = await self._person_from_cache(person_id)
         if not person:
             person = await self._get_person_from_elastic(person_id)
-            print('person from elastic --- ', person)
             if not person:
-                print('NO person!!')
                 return None
             await self._put_person_to_cache(person)
         return person
