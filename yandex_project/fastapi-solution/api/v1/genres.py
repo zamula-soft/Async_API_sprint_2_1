@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 from services.genres import GenreService, get_genre_service
 
@@ -14,21 +14,19 @@ class Genre(BaseModel):
 
 @router.get('/')
 async def get_all_genres(
-        count: int = 10,
-        order: str = 'desc',
+        page_size: int = Query(ge=1, le=100, default=10),
+        page_number: int = Query(default=0, ge=0),
         genre_service: GenreService = Depends(get_genre_service),
+        sort: str = Query(
+            default='-name',
+            regex='^-?name',
+            description='You can use only: name, -name'),
 ) -> Genre:
 
-    if count > 100:
-        count = 100
-
-    films = await genre_service.get_genres(count=count, order=order)
-    if not films:
-        # Если фильм не найден, отдаём 404 статус
-        # Желательно пользоваться уже определёнными HTTP-статусами, которые содержат enum
-        # Такой код будет более поддерживаемым
+    genres = await genre_service.get_genres(page_size=page_size, page_number=page_number, order_by=sort)
+    if not genres:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='genre not found')
-    return films
+    return genres
 
 
 @router.get('/{genre_id}', response_model=Genre)

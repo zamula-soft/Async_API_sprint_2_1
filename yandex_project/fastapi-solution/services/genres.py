@@ -23,113 +23,58 @@ class GenreService:
         self.redis = redis
         self.elastic = elastic
 
-    async def get_genres(self, count: int, order: str = 'desc'):
+    async def get_genres(self, page_size: int = 10, page_number: int = 0, order_by: str = '-name'):
+
+        order = 'asc'
+        if order_by.startswith('-'):
+            order = 'desc'
 
         elastic_query = {
-            "size": count,
-            "query": {
-                "match_all": {}
-            },
-            "_source": 'false',
-            "fields": [
-                {
-                    "field": "name"
-                },
-                {
-                    "field": "id"
-                },
-
-            ],
+            "size": page_size,
+            "from": page_number * page_size,
             "sort": [
                 {
-                    "rating": {
+                    "name.keyword": {
                         "order": order,
-                        "missing": "_last",
-                        "unmapped_type": "float"
                     }
                 }
             ]
         }
+
         resp = await self.elastic.search(index='genres', body=elastic_query)
-        print('Get_top_genre_top_movies resp---', resp)
 
-        top_movies = resp['hits']['hits']
-        res = []
-        for m in top_movies:
-            res.append(
-                {
-                    'id': m['fields']['id'][0],
-                    'name': m['fields']['name'][0],
-                })
+        return self._get_result(resp, page_size, page_number)
 
-        return res
+    async def get_movies_by_genre(
+            self, genre_id: str = '', page_size: int = 10, page_number: int = 0, order_by: str = '-rating'):
 
-    async def get_movies_by_genre(self, genre_name: str = '', count: int = 10, order: str = 'desc'):
-        print('вошли в get_top_genre_top_movies ---')
-        print('genre_name ---- ', genre_name)
-
-        query = {
-            "match": {
-                "genres": {
-                    'id': genre_name,
-                },
-                }
-            }
-
-        if not genre_name:
-            query = {
-                    "match_all": {}
-                }
+        order = 'asc'
+        if order_by.startswith('-'):
+            order = 'desc'
+            order_by = order_by[1:]
 
         elastic_query = {
-                "size" : count,
-                "query" : query,
-                "_source" : 'false',
-                "fields" : [
-                    {
-                    "field" : "title"
-                    },
-                    {
-                    "field" : "genre"
-                    },
-                    {
-                    "field" : "rating"
-                    },
-                    {
-                        "field": "id"
-                    },
-                    {
-                        "field": ''
+            "size": page_size,
+            "from": page_number * page_size,
+            "query": {
+                "match": {
+                    "genre.id.keyword": {
+                        "query": genre_id
                     }
-
-                ],
-                "sort" : [
-                    {
-                    "rating" : {
-                        "order" : order,
-                        "missing" : "_last",
-                        "unmapped_type" : "float"
-                    }
-                    }
-                ]
                 }
-        resp = await self.elastic.search(index='movies',body=elastic_query)
-        print('Get_top_genre_top_movies resp---', resp)
-        # for e in resp:
-        #     print('e---',e)
-        top_movies = resp['hits']['hits']
-        res = []
-        for m in top_movies:
-            # print('m---',m)
-            res.append(
+            },
+            "sort": [
                 {
-                    'id': m['fields']['id'][0],
-                    'title': m['fields']['title'][0],
-                    'rating': m['fields']['rating'][0],
+                    order_by: {
+                        "order": order,
+                    }
+                }
+            ]
+        }
 
-                })
+        resp = await self.elastic.search(index='movies', body=elastic_query)
 
-        return res
+        return self._get_result(resp, page_size, page_number)
 
     async def get_by_id(self, genre_id: str) -> Optional[Genre]:
         """
@@ -179,6 +124,34 @@ class GenreService:
         :return:
         """
         await self.redis.set(genre.id, genre.json(), expire=GENRE_CACHE_EXPIRE_IN_SECONDS)
+
+
+    def _create_pagination(self, resp, page_size, page_number):
+        total_entities_count = resp['hits']['total']['value']
+        last_page = int(total_entities_count) // page_size - 1 if int(
+            total_entities_count) % page_size == 0 else int(total_entities_count) // page_size
+        next_page = page_number + 1 if page_number < last_page else None
+        prev_page = page_number - 1 if (page_number-1) >= 0 else None
+
+        pagination_info = {'first': 0, 'last': last_page}
+
+        if prev_page:
+            pagination_info['prev'] = prev_page
+        if next_page:
+            pagination_info['next'] = next_page
+
+        return {'pagination': pagination_info, 'result': []}
+
+    def _get_result(self, resp, page_size, page_number):
+        result = self._create_pagination(resp, page_size, page_number)
+
+        top_movies = resp['hits']['hits']
+        for movie in top_movies:
+            result['result'].append(Genre(**movie['_source']))
+
+        return result
+
+
 
 
 @lru_cache()
