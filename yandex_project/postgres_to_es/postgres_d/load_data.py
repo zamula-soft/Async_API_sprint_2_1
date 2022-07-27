@@ -1,13 +1,17 @@
-from typing import Generator
-from datetime import datetime
-
 from backoff import on_exception, expo
 import psycopg2
 from psycopg2.extras import DictCursor
-from settings import PACK_SIZE, PostgresDsl
-from models import Person
 
-from .queries import (QUERY_GET_FILMS_BY_DATE_MODIFY, QUERY_GET_NEW_GENRES, QUERY_TEMPLATE)
+from settings import PACK_SIZE, PostgresDsl
+from utils import logger
+from postgres_d.queries import (
+    QUERY_GET_FILMS_BY_DATE_MODIFY,
+    QUERY_GET_GENRES,
+    QUERY_TEMPLATE,
+    QUERY_GET_PERSONS_BY_DATE_MODIFY,
+    QUERY_GET_GENRES_BY_DATE_MODIFY,
+    QUERY_GET_PERSONS,
+)
 
 
 class PGLoader:
@@ -16,9 +20,26 @@ class PGLoader:
     def __init__(self) -> None:
         """Init."""
         self.pack_size = PACK_SIZE
+        self.queries = {
+            'movies':
+                {
+                    'query_by_date_modify': QUERY_GET_FILMS_BY_DATE_MODIFY,
+                    'query_get_data': QUERY_TEMPLATE,
+                },
+            'genres':
+                {
+                    'query_by_date_modify': QUERY_GET_GENRES_BY_DATE_MODIFY,
+                    'query_get_data': QUERY_GET_GENRES
+                },
+            'persons':
+                {
+                    'query_by_date_modify': QUERY_GET_PERSONS_BY_DATE_MODIFY,
+                    'query_get_data': QUERY_GET_PERSONS
+                }
+            }
 
     @on_exception(expo, BaseException)
-    def get_from_database(self, mod_date: str):
+    def get_from_database(self, mod_date: str, type_data: str):
         """
         Get new film from database.
         :param mod_date: Date last update.
@@ -26,10 +47,13 @@ class PGLoader:
         """
         with psycopg2.connect(**PostgresDsl().dict()) as conn:
             with conn.cursor(cursor_factory=DictCursor) as cur:
-                new_films = self._get_changes(cur, mod_date, QUERY_GET_FILMS_BY_DATE_MODIFY)
-                if new_films:
-                    sql_query_templ = QUERY_TEMPLATE
-                    for fw_ids in new_films:
+                logger.debug(f'start get data from postgres for {type_data}')
+                query = self.queries.get(type_data)
+                new_data = self._get_changes(cur, mod_date, query['query_by_date_modify'])
+                if new_data:
+                    logger.debug('find data for update')
+                    sql_query_templ = query['query_get_data']
+                    for fw_ids in new_data:
                         sql_query = sql_query_templ.format(
                             ', '.join([f"'{i}'" for i in fw_ids]))
                         cur.execute(sql_query)
@@ -44,7 +68,9 @@ class PGLoader:
         :return:
         """
 
-        sql_query = query.format(mod_date=mod_date)
+        logger.debug('start find new data')
+
+        sql_query = query.format(date_modify=mod_date)
 
         cur.execute(sql_query)
 
@@ -59,23 +85,3 @@ class PGLoader:
                 ids.append(row['id'])
 
             yield ids
-
-    def get_new_persons(self, newest_person_date: str) -> Generator[Person, None, None] | None:
-        """
-        Достает person, обновленные после newest_person_date
-        """
-        with psycopg2.connect(**PostgresDsl().dict()) as conn:
-            with conn.cursor(cursor_factory=DictCursor) as cur:
-                cur.execute('SELECT * FROM content.person where modified > %s ORDER BY modified desc;',
-                            (newest_person_date,))
-                while row := cur.fetchone():
-                    yield Person(**dict(row))
-
-    def get_new_genres(self, newest_genre_date: datetime) -> Generator[Person, None, None] | None:
-        """
-        Достает genre, обновленные после newest_genre_date
-        """
-        with psycopg2.connect(**PostgresDsl().dict()) as conn:
-            with conn.cursor(cursor_factory=DictCursor) as cur:
-                cur.execute(QUERY_GET_NEW_GENRES, (newest_genre_date,))
-                yield cur.fetchall()

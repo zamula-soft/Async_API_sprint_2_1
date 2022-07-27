@@ -1,0 +1,3 @@
+from .films_queries import QUERY_TEMPLATE, QUERY_GET_FILMS_BY_DATE_MODIFY
+from .person_queries import QUERY_GET_PERSONS_BY_DATE_MODIFY, QUERY_GET_PERSONS
+from .genre_queris import QUERY_GET_GENRES, QUERY_GET_GENRES_BY_DATE_MODIFY

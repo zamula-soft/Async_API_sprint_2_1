@@ -29,15 +29,21 @@ class ESLoader:
 
     def __init__(self) -> None:
         self.__client = Elasticsearch(hosts=[ElascticSearchDsl().dict()])
+        self._generators = {
+            'movies': generate_data,
+            'genres': generate_genres,
+            'persons': generate_people,
+        }
 
-    def save_movies(self, data) -> None:
+    def save_data(self, data, type_data) -> None:
         """
         Save data in Elasticsearch.
         :param data: data for save.
         :return:
         """
         self.__check_connection()
-        helpers.bulk(self.__client, generate_data(data))
+        generator = self._generators.get(type_data)
+        helpers.bulk(self.__client, generator(data))
 
     def save_persons(self, persons: Iterable[Person]) -> None:
         helpers.bulk(self.__client, generate_people(persons))
@@ -52,15 +58,12 @@ class ESLoader:
 
     def create_mapping_films(self):
 
-        logger.debug(MAPPING_FILMS)
-
         self.__check_connection()
         self.__client.indices.delete(index="movies")
         self.__client.indices.create(index="movies", body=MAPPING_FILMS)
-        # helpers.bulk(self.__client, mapping, index="movies")
 
 
-def generate_genres(genres: Iterable[DictCursor]) -> Generator[dict, None, None]:
+def generate_genres(genres: Iterable[Genre]) -> Generator[dict, None, None]:
     for genre in genres:
         logger.debug('обновили или добавили genre {0}'.format(genre['id']))
         yield {
@@ -86,12 +89,6 @@ def generate_data(movies_list):
             else:
                 doc[fld_name] = movie[fld_name]
 
-        logger.debug({
-            '_index': 'movies',
-            '_id': movie['id'],
-            **doc,
-        })
-
         yield {
             '_index': 'movies',
             '_id': movie['id'],
@@ -104,7 +101,7 @@ def generate_people(persons: Iterable[Person]):
         logger.debug('обновили или добавили person: {0}, {1}'.format(pers.full_name, pers.id))
         yield {
             '_index': 'persons',
-            '_id': pers.id,
-            'full_name': pers.full_name,
-            'id': pers.id
+            '_id': pers['id'],
+            'full_name': pers['full_name'],
+            'id': pers['id'],
         }
