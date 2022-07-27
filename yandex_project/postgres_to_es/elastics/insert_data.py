@@ -6,7 +6,7 @@ from psycopg2.extras import DictCursor
 from models import Person, Genre
 from settings import ElascticSearchDsl
 from utils import logger
-from elastics.mapping import MAPPING_FILMS
+from elastics.mapping import MAPPING_FILMS, MAPPING_GENRES, MAPPING_PERSONS
 
 FIELDS = [
     'id',
@@ -34,6 +34,11 @@ class ESLoader:
             'genres': generate_genres,
             'persons': generate_people,
         }
+        self._mapping = [
+            {'type': 'movies', 'mapping': MAPPING_FILMS},
+            {'type': 'genres', 'mapping': MAPPING_GENRES},
+            {'type': 'persons', 'mapping': MAPPING_PERSONS},
+        ]
 
     def save_data(self, data, type_data) -> None:
         """
@@ -41,26 +46,24 @@ class ESLoader:
         :param data: data for save.
         :return:
         """
+        logger.debug('\nSave data to elastic')
         self.__check_connection()
         generator = self._generators.get(type_data)
         helpers.bulk(self.__client, generator(data))
-
-    def save_persons(self, persons: Iterable[Person]) -> None:
-        helpers.bulk(self.__client, generate_people(persons))
 
     @backoff.on_exception(backoff.expo, BaseException)
     def __check_connection(self) -> None:
         if not self.__client.ping():
             raise ConnectionError
 
-    def save_genres(self, genres: Iterable[Genre]) -> None:
-        helpers.bulk(self.__client, generate_genres(genres))
-
     def create_mapping_films(self):
-
+        logger.debug('\nDelete mapping from elastic')
         self.__check_connection()
-        self.__client.indices.delete(index="movies")
-        self.__client.indices.create(index="movies", body=MAPPING_FILMS)
+        for mapping in self._mapping:
+            logger.debug('Update mapping for {type}'.format(**mapping))
+            if self.__client.indices.exists(index=mapping['type']):
+                self.__client.indices.delete(index=mapping['type'])
+            self.__client.indices.create(index=mapping['type'], body=mapping['mapping'])
 
 
 def generate_genres(genres: Iterable[Genre]) -> Generator[dict, None, None]:
@@ -95,9 +98,9 @@ def generate_data(movies_list):
         }
 
 
-def generate_people(persons: Iterable[Person]):
+def generate_people(persons):
     for pers in persons:
-        logger.debug('обновили или добавили person: {0}, {1}'.format(pers.full_name, pers.id))
+        logger.debug('обновили или добавили person: {id}'.format(id=pers['id']))
         yield {
             '_index': 'persons',
             '_id': pers['id'],
