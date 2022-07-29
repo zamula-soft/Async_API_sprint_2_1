@@ -41,7 +41,7 @@ services:
     expose:
       - "6379"
   etl:
-    container_name: elt-proccess
+    container_name: elt-process
     build:
       context: ./postgres_to_es
     env_file:
