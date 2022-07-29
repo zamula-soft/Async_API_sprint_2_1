@@ -5,6 +5,8 @@ from pydantic import BaseModel
 from pydantic.schema import Optional, List, Dict
 
 from services.person import PersonService, get_person_service
+from .custom_error import CustomNotFound
+
 
 router = APIRouter()
 
@@ -47,6 +49,9 @@ async def get_all_persons(
 @router.get('/{person_id}', response_model=Person)
 async def person_details(person_id: str, service: PersonService = Depends(get_person_service)) -> Person:
     person = await service.get_by_id(person_id)
+    if not person:
+        raise CustomNotFound(name='person', uid=person_id)
+
     return Person(**person.dict())
 
 

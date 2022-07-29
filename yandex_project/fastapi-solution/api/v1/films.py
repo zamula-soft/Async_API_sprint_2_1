@@ -1,10 +1,9 @@
-from http import HTTPStatus
-
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
-from pydantic.schema import Optional, List, Dict
-
+from pydantic.schema import Dict, List, Optional
 from services.film import FilmService, get_film_service
+
+from .custom_error import CustomNotFound
 
 router = APIRouter()
 
@@ -60,11 +59,7 @@ async def search_movie_by_word(
 async def film_details(film_id: str, film_service: FilmService = Depends(get_film_service)) -> Film:
     film = await film_service.get_by_id(film_id)
     if not film:
-        # Если фильм не найден, отдаём 404 статус
-        # Желательно пользоваться уже определёнными HTTP-статусами, которые содержат enum
-        # Такой код будет более поддерживаемым
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
-                            detail='film not found')
+        raise CustomNotFound(name='film', uid=film_id )
 
     # Перекладываем данные из models.Film в Film
     # Обратите внимание, что у модели бизнес-логики есть поле description

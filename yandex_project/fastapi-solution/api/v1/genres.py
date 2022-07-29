@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from pydantic.schema import Optional, List, Dict
 
 from services import GenreService, get_genre_service
+from .custom_error import CustomNotFound
 
 router = APIRouter()
 
@@ -50,8 +51,8 @@ async def get_all_genres(
 async def genre_details(genre_id: str, genre_service: GenreService = Depends(get_genre_service)) -> Genre:
     genre = await genre_service.get_by_id(genre_id)
     if not genre:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
-                            detail='genre not found')
+        raise CustomNotFound(name='genre', uid=genre_id)
+
     return Genre(
         **genre.dict())
 

@@ -3,10 +3,10 @@ import logging
 import aioredis
 import uvicorn
 from elasticsearch import AsyncElasticsearch
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.responses import ORJSONResponse
 
-from api.v1 import films, genres, persons
+from api.v1 import films, genres, persons, custom_error
 from core import config
 from core.logger import LOGGING
 from db import elastic, redis
@@ -30,6 +30,14 @@ async def shutdown():
     redis.redis.close()
     await redis.redis.wait_closed()
     await elastic.es.close()
+
+
+@app.exception_handler(custom_error.CustomNotFound)
+async def unicorn_exception_handler(request: Request, exc:custom_error.CustomNotFound):
+    return ORJSONResponse(
+        status_code=exc.status_code,
+        content={"query": f"{exc.name} {exc.uid}", "result":exc.message},
+    )
 
 
 app.include_router(films.router, prefix='/api/v1/films', tags=['films'])
