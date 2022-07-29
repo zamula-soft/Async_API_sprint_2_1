@@ -72,12 +72,4 @@ async def film_details(film_id: str, film_service: FilmService = Depends(get_fil
         # Если бы использовалась общая модель для бизнес-логики и формирования ответов API
         # вы бы предоставляли клиентам данные, которые им не нужны
         # и, возможно, данные, которые опасно возвращать
-    return Film(
-        id=film.id,
-        title=film.title,
-        actors=film.actors,
-        rating=film.rating,
-        genres=film.genres,
-        writers=film.writers,
-        directors=film.directors,
-    )
+    return Film(**film.dict())
