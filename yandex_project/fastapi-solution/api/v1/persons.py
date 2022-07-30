@@ -1,36 +1,14 @@
 from fastapi import APIRouter, Depends, Query
-from pydantic import BaseModel
-from pydantic.schema import Optional, List, Dict
 
 from services.person import PersonService, get_person_service
 from api.v1.messges import message_not_found
-
+from api.v1.models import Person, Films
 
 
 router = APIRouter()
 
 
-class Person(BaseModel):
-    id: str = None
-    full_name: str = None
-
-
-class Film(BaseModel):
-    id: str
-    title: str
-    rating: float
-    actors: Optional[List[Optional[dict]]]
-    genres: Optional[List[Optional[dict]]]
-    writers: Optional[List[Optional[dict]]]
-    directors: Optional[List[Optional[dict]]]
-
-
-class Films(BaseModel):
-    pagination: Dict
-    result: List[Film]
-
-
-@router.get('/')
+@router.get('/', response_model=Person)
 async def get_all_persons(
         page_size: int = Query(ge=1, le=100, default=10),
         page_number: int = Query(default=0, ge=0),

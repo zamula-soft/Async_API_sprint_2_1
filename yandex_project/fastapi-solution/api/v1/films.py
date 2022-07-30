@@ -1,29 +1,13 @@
 from fastapi import APIRouter, Depends, Query
-from pydantic import BaseModel
-from pydantic.schema import Dict, List, Optional
 
 from services.film import FilmService, get_film_service
 from api.v1.messges import message_not_found
+from api.v1.models import Film, Films
 
 router = APIRouter()
 
 
-class Film(BaseModel):
-    id: str
-    title: str
-    rating: float
-    actors: Optional[List[Optional[dict]]]
-    genres: Optional[List[Optional[dict]]]
-    writers: Optional[List[Optional[dict]]]
-    directors: Optional[List[Optional[dict]]]
-
-
-class Films(BaseModel):
-    pagination: Dict
-    result: List
-
-
-@router.get('/')
+@router.get('/', response_model=Films)
 async def get_all_movies(
         page_size: int = Query(ge=1, le=100, default=10),
         page_number: int = Query(default=0, ge=0),
@@ -46,7 +30,7 @@ async def get_all_movies(
     return Films(pagination=films['pagination'], result=films['result'])
 
 
-@router.get('/search/')
+@router.get('/search/', response_model=Films)
 async def search_movie_by_word(
         search_word: str,
         page_size: int = Query(ge=1, le=100, default=10),
