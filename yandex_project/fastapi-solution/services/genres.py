@@ -97,6 +97,7 @@ class GenreService:
         :param genre_id: Genre id.
         :return: Model Genre.
         """
+        genre_id = f'api_cache::elastic::genre::{genre_id}'
         try:
             doc = await self.elastic.get('genres', genre_id)
         except NotFoundError:
@@ -121,7 +122,8 @@ class GenreService:
         :param genre: genre.id
         :return:
         """
-        await self.redis.set(genre.id, genre.json(), expire=GENRE_CACHE_EXPIRE_IN_SECONDS)
+        genre_id = f'api_cache::elastic::genre::{genre.id}'
+        await self.redis.set(genre_id, genre.json(), expire=GENRE_CACHE_EXPIRE_IN_SECONDS)
 
 
 @lru_cache()

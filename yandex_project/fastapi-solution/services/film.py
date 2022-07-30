@@ -102,6 +102,7 @@ class FilmService:
         :param film_id: Film id.
         :return: Model Film
         """
+        film_id = f'api_cache::elastic::movies::{film_id}'
         # Пытаемся получить данные о фильме из кеша, используя команду get
         # https://redis.io/commands/get
         data = await self.redis.get(film_id)
@@ -122,7 +123,8 @@ class FilmService:
         # Выставляем время жизни кеша — 5 минут
         # https://redis.io/commands/set
         # pydantic позволяет сериализовать модель в json
-        await self.redis.set(film.id, film.json(), expire=FILM_CACHE_EXPIRE_IN_SECONDS)
+        film_id = f'api_cache::elastic::movies::{film.id}'
+        await self.redis.set(film_id, film.json(), expire=FILM_CACHE_EXPIRE_IN_SECONDS)
 
 
 @lru_cache()
