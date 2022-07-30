@@ -1,10 +1,9 @@
-from http import HTTPStatus
-
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
 from pydantic.schema import Optional, List, Dict
 
 from services import GenreService, get_genre_service
+from api.v1.messges import message_not_found
 
 router = APIRouter()
 
@@ -35,23 +34,29 @@ async def get_all_genres(
         page_number: int = Query(default=0, ge=0),
         genre_service: GenreService = Depends(get_genre_service),
         sort: str = Query(
-            default='-name',
+            default='name',
             regex='^-?name',
             description='You can use only: name, -name'),
 ) -> Genre:
+    '''    Get all genres (sorted by name by default) 
+        - **sort**: [name, -name]
+        - **page_size**: page size
+        - **page_number**: page number
+    '''
 
     genres = await genre_service.get_genres(page_size=page_size, page_number=page_number, order_by=sort)
-    if not genres:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='genre not found')
     return genres
 
 
 @router.get('/{genre_id}', response_model=Genre)
 async def genre_details(genre_id: str, genre_service: GenreService = Depends(get_genre_service)) -> Genre:
+    ''' Get genre info (only genre name is available so far)
+        - **genre_id**: genre uuid
+    '''
     genre = await genre_service.get_by_id(genre_id)
     if not genre:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
-                            detail='genre not found')
+        raise message_not_found(name_object='genre', id_object=genre_id)
+
     return Genre(
         **genre.dict())
 
@@ -66,7 +71,14 @@ async def get_films_by_genre(
             regex='^-?(rating|title)',
             description='You can use only: rating, -rating, title, -title'),
         genre_service: GenreService = Depends(get_genre_service)) -> Genre:
+    """
+    Get all movies of a genre (sorted by ratings by default)
+    - **genre_id**: genre uuid
+    - **sort**: [rating, -rating, title, -title]
+    - **page_size**: page size
+    - **page_number**: page number
 
+    """
     if 'title' in sort:
         sort += '.keyword'
 
