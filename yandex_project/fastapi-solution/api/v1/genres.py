@@ -2,13 +2,13 @@ from fastapi import APIRouter, Depends, Query
 
 from services import GenreService, get_genre_service
 from api.v1.messges import message_not_found
-from api.v1.models import Genre, Films
+from api.v1.models import Genre, Films, Genres
 
 
 router = APIRouter()
 
 
-@router.get('/', response_model=Genre)
+@router.get('/', response_model=Genres)
 async def get_all_genres(
         page_size: int = Query(ge=1, le=100, default=10),
         page_number: int = Query(default=0, ge=0),
@@ -17,8 +17,8 @@ async def get_all_genres(
             default='name',
             regex='^-?name',
             description='You can use only: name, -name'),
-) -> Genre:
-    '''    Get all genres (sorted by name by default) 
+) -> Genres:
+    '''    Get all genres (sorted by name by default)
         - **sort**: [name, -name]
         - **page_size**: page size
         - **page_number**: page number
@@ -37,8 +37,7 @@ async def genre_details(genre_id: str, genre_service: GenreService = Depends(get
     if not genre:
         raise message_not_found(name_object='genre', id_object=genre_id)
 
-    return Genre(
-        **genre.dict())
+    return Genre(**genre.dict())
 
 
 @router.get('/{genre_id}/films/', response_model=Films)
@@ -50,7 +49,7 @@ async def get_films_by_genre(
             default='-rating',
             regex='^-?(rating|title)',
             description='You can use only: rating, -rating, title, -title'),
-        genre_service: GenreService = Depends(get_genre_service)) -> Genre:
+        genre_service: GenreService = Depends(get_genre_service)) -> Films:
     """
     Get all movies of a genre (sorted by ratings by default)
     - **genre_id**: genre uuid
@@ -69,4 +68,4 @@ async def get_films_by_genre(
         order_by=sort
     )
 
-    return films
+    return Films(pagination=films['pagination'], result=films['result'])
