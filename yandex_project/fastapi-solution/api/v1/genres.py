@@ -1,11 +1,9 @@
-from http import HTTPStatus
-
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
 from pydantic.schema import Optional, List, Dict
 
 from services import GenreService, get_genre_service
-from .custom_error import CustomNotFound
+from api.v1.messges import message_not_found
 
 router = APIRouter()
 
@@ -47,8 +45,6 @@ async def get_all_genres(
     '''
 
     genres = await genre_service.get_genres(page_size=page_size, page_number=page_number, order_by=sort)
-    if not genres:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='genre not found')
     return genres
 
 
@@ -59,7 +55,7 @@ async def genre_details(genre_id: str, genre_service: GenreService = Depends(get
     '''
     genre = await genre_service.get_by_id(genre_id)
     if not genre:
-        raise CustomNotFound(name='genre', uid=genre_id)
+        raise message_not_found(name_object='genre', id_object=genre_id)
 
     return Genre(
         **genre.dict())

@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
 from pydantic.schema import Dict, List, Optional
-from services.film import FilmService, get_film_service
 
-from .custom_error import CustomNotFound
+from services.film import FilmService, get_film_service
+from api.v1.messges import message_not_found
 
 router = APIRouter()
 
@@ -74,7 +74,7 @@ async def film_details(film_id: str, film_service: FilmService = Depends(get_fil
     """
     film = await film_service.get_by_id(film_id)
     if not film:
-        raise CustomNotFound(name='film', uid=film_id )
+        raise message_not_found(name_object='film', id_object=film_id)
     return Film(
         id=film.id,
         title=film.title,

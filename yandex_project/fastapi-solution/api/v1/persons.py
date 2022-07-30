@@ -1,11 +1,9 @@
-from http import HTTPStatus
-
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
 from pydantic.schema import Optional, List, Dict
 
 from services.person import PersonService, get_person_service
-from .custom_error import CustomNotFound
+from api.v1.messges import message_not_found
 
 
 router = APIRouter()
@@ -62,7 +60,7 @@ async def person_details(person_id: str, service: PersonService = Depends(get_pe
 
     person = await service.get_by_id(person_id)
     if not person:
-        raise CustomNotFound(name='person', uid=person_id)
+        raise message_not_found(name_object='person', id_object=person_id)
 
     return Person(**person.dict())
 
