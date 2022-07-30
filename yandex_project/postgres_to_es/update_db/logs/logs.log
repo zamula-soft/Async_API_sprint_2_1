@@ -1,0 +1,642 @@
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+REASON: syntax error at or near "'id'"
+LINE 1: COPY content.genre ('id', 'name', 'description', 'created', ...
+                            ^
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+REASON: syntax error at or near "'id'"
+LINE 1: COPY content.genre ('id', 'name', 'description', 'created', ...
+                            ^
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+REASON: syntax error at or near "'id'"
+LINE 1: COPY content.genre ('id', 'name', 'description', 'created', ...
+                            ^
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+REASON: invalid input syntax for type uuid: "id"
+CONTEXT:  COPY genre, line 1, column id: "id"
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+REASON: duplicate key value violates unique constraint "genre_pkey"
+DETAIL:  Key (id)=(3d8d9bf5-0d90-4353-88ba-4ccc5d2c07ff) already exists.
+CONTEXT:  COPY genre, line 28
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+REASON: postgres_connector() missing 1 required positional argument: 'dsn'
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 87, in <module>
+    with sqlite_connector('db.sqlite') as sqlite_conn, postgres_connector() as pg_conn:
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/contextlib.py", line 281, in helper
+    return _GeneratorContextManager(func, args, kwds)
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/contextlib.py", line 103, in __init__
+    self.gen = func(*args, **kwds)
+TypeError: postgres_connector() missing 1 required positional argument: 'dsn'
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data_2.py", line 89, in <module>
+    with sqlite_connector('db.sqlite') as sqlite_conn, postgres_connector(dsn) as pg_conn:
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/contextlib.py", line 135, in __enter__
+    return next(self.gen)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/db_connectors.py", line 33, in postgres_connector
+    conn = psycopg2.connect(**dsn, cursor_factory=psycopg2.extras.RealDictCursor)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/venv/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "127.0.0.1", port 5432 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 97, in <module>
+    with sqlite_connector('db.sqlite') as sqlite_conn, postgres_connector(dsn) as pg_conn:
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/contextlib.py", line 135, in __enter__
+    return next(self.gen)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/db_connectors.py", line 33, in postgres_connector
+    conn = psycopg2.connect(**dsn, cursor_factory=psycopg2.extras.RealDictCursor)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/venv/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "127.0.0.1", port 5432 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 99, in <module>
+    with sqlite_connector('db.sqlite') as sqlite_conn, postgres_connector(dsn) as pg_conn:
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/contextlib.py", line 135, in __enter__
+    return next(self.gen)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/db_connectors.py", line 33, in postgres_connector
+    conn = psycopg2.connect(**dsn, cursor_factory=psycopg2.extras.RealDictCursor)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/venv/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "127.0.0.1", port 5432 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 99, in <module>
+    with sqlite_connector('db.sqlite') as sqlite_conn, postgres_connector(dsn) as pg_conn:
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/contextlib.py", line 135, in __enter__
+    return next(self.gen)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/db_connectors.py", line 33, in postgres_connector
+    conn = psycopg2.connect(**dsn, cursor_factory=psycopg2.extras.RealDictCursor)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/venv/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: could not translate host name "localhos" to address: nodename nor servname provided, or not known
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 99, in <module>
+    with sqlite_connector('db.sqlite') as sqlite_conn, postgres_connector(dsn) as pg_conn:
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/contextlib.py", line 135, in __enter__
+    return next(self.gen)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/db_connectors.py", line 33, in postgres_connector
+    conn = psycopg2.connect(**dsn, cursor_factory=psycopg2.extras.RealDictCursor)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/venv/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: could not translate host name "postgres" to address: nodename nor servname provided, or not known
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 99, in <module>
+    with sqlite_connector('db.sqlite') as sqlite_conn, postgres_connector(dsn) as pg_conn:
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/contextlib.py", line 135, in __enter__
+    return next(self.gen)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/db_connectors.py", line 33, in postgres_connector
+    conn = psycopg2.connect(**dsn, cursor_factory=psycopg2.extras.RealDictCursor)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/venv/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "127.0.0.1", port 5432 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 99, in <module>
+    with sqlite_connector('db.sqlite') as sqlite_conn, postgres_connector(dsn) as pg_conn:
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/contextlib.py", line 135, in __enter__
+    return next(self.gen)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/db_connectors.py", line 33, in postgres_connector
+    conn = psycopg2.connect(**dsn, cursor_factory=psycopg2.extras.RealDictCursor)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/venv/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: could not translate host name "simple_project-postgres-1" to address: nodename nor servname provided, or not known
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 99, in <module>
+    with sqlite_connector('db.sqlite') as sqlite_conn, postgres_connector(dsn) as pg_conn:
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/contextlib.py", line 135, in __enter__
+    return next(self.gen)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/db_connectors.py", line 33, in postgres_connector
+    conn = psycopg2.connect(**dsn, cursor_factory=psycopg2.extras.RealDictCursor)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/venv/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: could not translate host name "localhos" to address: nodename nor servname provided, or not known
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 99, in <module>
+    with sqlite_connector('db.sqlite') as sqlite_conn, postgres_connector(dsn) as pg_conn:
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/contextlib.py", line 135, in __enter__
+    return next(self.gen)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/db_connectors.py", line 33, in postgres_connector
+    conn = psycopg2.connect(**dsn, cursor_factory=psycopg2.extras.RealDictCursor)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/venv/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 99, in <module>
+    with sqlite_connector('db.sqlite') as sqlite_conn, postgres_connector(dsn) as pg_conn:
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/contextlib.py", line 135, in __enter__
+    return next(self.gen)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/db_connectors.py", line 33, in postgres_connector
+    conn = psycopg2.connect(**dsn, cursor_factory=psycopg2.extras.RealDictCursor)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/venv/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: could not translate host name "postgres" to address: nodename nor servname provided, or not known
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 99, in <module>
+    with sqlite_connector('db.sqlite') as sqlite_conn, postgres_connector(dsn) as pg_conn:
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/contextlib.py", line 135, in __enter__
+    return next(self.gen)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/db_connectors.py", line 33, in postgres_connector
+    conn = psycopg2.connect(**dsn, cursor_factory=psycopg2.extras.RealDictCursor)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/venv/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: could not translate host name "postgres:14.3-alpine" to address: nodename nor servname provided, or not known
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 99, in <module>
+    with sqlite_connector('db.sqlite') as sqlite_conn, postgres_connector(dsn) as pg_conn:
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/contextlib.py", line 135, in __enter__
+    return next(self.gen)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/db_connectors.py", line 33, in postgres_connector
+    conn = psycopg2.connect(**dsn, cursor_factory=psycopg2.extras.RealDictCursor)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/venv/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 99, in <module>
+    with sqlite_connector('db.sqlite') as sqlite_conn, postgres_connector(dsn) as pg_conn:
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/contextlib.py", line 135, in __enter__
+    return next(self.gen)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/db_connectors.py", line 33, in postgres_connector
+    conn = psycopg2.connect(**dsn, cursor_factory=psycopg2.extras.RealDictCursor)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/venv/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 100, in <module>
+    load_from_sqlite(sqlite_conn, pg_conn)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 82, in load_from_sqlite
+    postgres_save_data(postgres_connection)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 41, in postgres_save_data
+    cursor.execute('TRUNCATE TABLE content.{table} CASCADE;'.format(table=table))
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/venv/lib/python3.10/site-packages/psycopg2/extras.py", line 236, in execute
+    return super().execute(query, vars)
+psycopg2.errors.UndefinedTable: relation "content.genre" does not exist
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 99, in <module>
+    with sqlite_connector('db.sqlite') as sqlite_conn, postgres_connector(dsn) as pg_conn:
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/contextlib.py", line 135, in __enter__
+    return next(self.gen)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/db_connectors.py", line 33, in postgres_connector
+    conn = psycopg2.connect(**dsn, cursor_factory=psycopg2.extras.RealDictCursor)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/venv/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5433 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+connection to server at "localhost" (127.0.0.1), port 5433 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 100, in <module>
+    load_from_sqlite(sqlite_conn, pg_conn)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 82, in load_from_sqlite
+    postgres_save_data(postgres_connection)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 41, in postgres_save_data
+    cursor.execute('TRUNCATE TABLE content.{table} CASCADE;'.format(table=table))
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/venv/lib/python3.10/site-packages/psycopg2/extras.py", line 236, in execute
+    return super().execute(query, vars)
+psycopg2.errors.UndefinedTable: relation "content.genre" does not exist
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 100, in <module>
+    load_from_sqlite(sqlite_conn, pg_conn)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 82, in load_from_sqlite
+    postgres_save_data(postgres_connection)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 44, in postgres_save_data
+    cursor.copy_expert(sql, open(file_path, 'r'))
+psycopg2.errors.NotNullViolation: null value in column "description" of relation "genre" violates not-null constraint
+DETAIL:  Failing row contains (2021-06-16 20:14:09.309735+00, 2021-06-16 20:14:09.309765+00, 3d8d9bf5-0d90-4353-88ba-4ccc5d2c07ff, Action, null).
+CONTEXT:  COPY genre, line 2: "3d8d9bf5-0d90-4353-88ba-4ccc5d2c07ff,Action,,2021-06-16 20:14:09.309735+00,2021-06-16 20:14:09.30976..."
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 100, in <module>
+    load_from_sqlite(sqlite_conn, pg_conn)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 82, in load_from_sqlite
+    postgres_save_data(postgres_connection)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 44, in postgres_save_data
+    cursor.copy_expert(sql, open(file_path, 'r'))
+psycopg2.errors.NotNullViolation: null value in column "description" of relation "genre" violates not-null constraint
+DETAIL:  Failing row contains (2021-06-16 20:14:09.309735+00, 2021-06-16 20:14:09.309765+00, 3d8d9bf5-0d90-4353-88ba-4ccc5d2c07ff, Action, null).
+CONTEXT:  COPY genre, line 2: "3d8d9bf5-0d90-4353-88ba-4ccc5d2c07ff,Action,,2021-06-16 20:14:09.309735+00,2021-06-16 20:14:09.30976..."
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 100, in <module>
+    load_from_sqlite(sqlite_conn, pg_conn)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 82, in load_from_sqlite
+    postgres_save_data(postgres_connection)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 44, in postgres_save_data
+    cursor.copy_expert(sql, open(file_path, 'r'))
+psycopg2.errors.NotNullViolation: null value in column "description" of relation "genre" violates not-null constraint
+DETAIL:  Failing row contains (2021-06-16 20:14:09.309735+00, 2021-06-16 20:14:09.309765+00, 3d8d9bf5-0d90-4353-88ba-4ccc5d2c07ff, Action, null).
+CONTEXT:  COPY genre, line 2: "3d8d9bf5-0d90-4353-88ba-4ccc5d2c07ff,Action,,2021-06-16 20:14:09.309735+00,2021-06-16 20:14:09.30976..."
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 100, in <module>
+    load_from_sqlite(sqlite_conn, pg_conn)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 82, in load_from_sqlite
+    postgres_save_data(postgres_connection)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 44, in postgres_save_data
+    cursor.copy_expert(sql, open(file_path, 'r'))
+psycopg2.errors.StringDataRightTruncation: value too long for type character varying(2)
+CONTEXT:  COPY film_work, line 2, column type: "movie"
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 101, in <module>
+    load_from_sqlite(sqlite_conn, pg_conn)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 83, in load_from_sqlite
+    postgres_save_data(postgres_connection)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 45, in postgres_save_data
+    cursor.copy_expert(sql, open(file_path, 'r'))
+psycopg2.errors.StringDataRightTruncation: value too long for type character varying(2)
+CONTEXT:  COPY film_work, line 2, column type: "movie"
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 101, in <module>
+    load_from_sqlite(sqlite_conn, pg_conn)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 83, in load_from_sqlite
+    postgres_save_data(postgres_connection)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 45, in postgres_save_data
+    cursor.copy_expert(sql, open(file_path, 'r'))
+psycopg2.errors.NotNullViolation: null value in column "description" of relation "genre" violates not-null constraint
+DETAIL:  Failing row contains (2021-06-16 20:14:09.309735+00, 2021-06-16 20:14:09.309765+00, 3d8d9bf5-0d90-4353-88ba-4ccc5d2c07ff, Action, null).
+CONTEXT:  COPY genre, line 2: "3d8d9bf5-0d90-4353-88ba-4ccc5d2c07ff,Action,,2021-06-16 20:14:09.309735+00,2021-06-16 20:14:09.30976..."
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 101, in <module>
+    load_from_sqlite(sqlite_conn, pg_conn)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 83, in load_from_sqlite
+    postgres_save_data(postgres_connection)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 45, in postgres_save_data
+    cursor.copy_expert(sql, open(file_path, 'r'))
+psycopg2.errors.NotNullViolation: null value in column "description" of relation "genre" violates not-null constraint
+DETAIL:  Failing row contains (2021-06-16 20:14:09.309735+00, 2021-06-16 20:14:09.309765+00, 3d8d9bf5-0d90-4353-88ba-4ccc5d2c07ff, Action, null).
+CONTEXT:  COPY genre, line 2: "3d8d9bf5-0d90-4353-88ba-4ccc5d2c07ff,Action,,2021-06-16 20:14:09.309735+00,2021-06-16 20:14:09.30976..."
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 100, in <module>
+    with sqlite_connector('db.sqlite') as sqlite_conn, postgres_connector(dsn) as pg_conn:
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/contextlib.py", line 135, in __enter__
+    return next(self.gen)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/db_connectors.py", line 33, in postgres_connector
+    conn = psycopg2.connect(**dsn, cursor_factory=psycopg2.extras.RealDictCursor)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/venv/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: FATAL:  role "app" does not exist
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 100, in <module>
+    with sqlite_connector('db.sqlite') as sqlite_conn, postgres_connector(dsn) as pg_conn:
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/contextlib.py", line 135, in __enter__
+    return next(self.gen)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/db_connectors.py", line 33, in postgres_connector
+    conn = psycopg2.connect(**dsn, cursor_factory=psycopg2.extras.RealDictCursor)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/venv/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: FATAL:  role "app" does not exist
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data_2.py", line 88, in <module>
+    with sqlite_connector('db.sqlite') as sqlite_conn, postgres_connector(dsn) as pg_conn:
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/contextlib.py", line 135, in __enter__
+    return next(self.gen)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/db_connectors.py", line 33, in postgres_connector
+    conn = psycopg2.connect(**dsn, cursor_factory=psycopg2.extras.RealDictCursor)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/venv/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "127.0.0.1", port 5432 failed: FATAL:  role "app" does not exist
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 100, in <module>
+    with sqlite_connector('db.sqlite') as sqlite_conn, postgres_connector(dsn) as pg_conn:
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/contextlib.py", line 135, in __enter__
+    return next(self.gen)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/db_connectors.py", line 33, in postgres_connector
+    conn = psycopg2.connect(**dsn, cursor_factory=psycopg2.extras.RealDictCursor)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/venv/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: FATAL:  role "app" does not exist
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 100, in <module>
+    with sqlite_connector('db.sqlite') as sqlite_conn, postgres_connector(dsn) as pg_conn:
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/contextlib.py", line 135, in __enter__
+    return next(self.gen)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/db_connectors.py", line 33, in postgres_connector
+    conn = psycopg2.connect(**dsn, cursor_factory=psycopg2.extras.RealDictCursor)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/venv/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: FATAL:  role "app" does not exist
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 100, in <module>
+    with sqlite_connector('db.sqlite') as sqlite_conn, postgres_connector(dsn) as pg_conn:
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/contextlib.py", line 135, in __enter__
+    return next(self.gen)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/db_connectors.py", line 33, in postgres_connector
+    conn = psycopg2.connect(**dsn, cursor_factory=psycopg2.extras.RealDictCursor)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/venv/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: FATAL:  role "app" does not exist
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 100, in <module>
+    with sqlite_connector('db.sqlite') as sqlite_conn, postgres_connector(dsn) as pg_conn:
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/contextlib.py", line 135, in __enter__
+    return next(self.gen)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/db_connectors.py", line 33, in postgres_connector
+    conn = psycopg2.connect(**dsn, cursor_factory=psycopg2.extras.RealDictCursor)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/venv/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: FATAL:  role "app" does not exist
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 100, in <module>
+    with sqlite_connector('db.sqlite') as sqlite_conn, postgres_connector(dsn) as pg_conn:
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/contextlib.py", line 135, in __enter__
+    return next(self.gen)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/db_connectors.py", line 33, in postgres_connector
+    conn = psycopg2.connect(**dsn, cursor_factory=psycopg2.extras.RealDictCursor)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/venv/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: FATAL:  role "app" does not exist
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 100, in <module>
+    with sqlite_connector('db.sqlite') as sqlite_conn, postgres_connector(dsn) as pg_conn:
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/contextlib.py", line 135, in __enter__
+    return next(self.gen)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/db_connectors.py", line 33, in postgres_connector
+    conn = psycopg2.connect(**dsn, cursor_factory=psycopg2.extras.RealDictCursor)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/venv/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: FATAL:  role "app" does not exist
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 100, in <module>
+    with sqlite_connector('db.sqlite') as sqlite_conn, postgres_connector(dsn) as pg_conn:
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/contextlib.py", line 135, in __enter__
+    return next(self.gen)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/db_connectors.py", line 33, in postgres_connector
+    conn = psycopg2.connect(**dsn, cursor_factory=psycopg2.extras.RealDictCursor)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/venv/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: FATAL:  role "app" does not exist
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data_2.py", line 88, in <module>
+    with sqlite_connector('db.sqlite') as sqlite_conn, postgres_connector(dsn) as pg_conn:
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/contextlib.py", line 135, in __enter__
+    return next(self.gen)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/db_connectors.py", line 33, in postgres_connector
+    conn = psycopg2.connect(**dsn, cursor_factory=psycopg2.extras.RealDictCursor)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/venv/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "127.0.0.1", port 5432 failed: FATAL:  role "app" does not exist
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 100, in <module>
+    with sqlite_connector('db.sqlite') as sqlite_conn, postgres_connector(dsn) as pg_conn:
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/contextlib.py", line 135, in __enter__
+    return next(self.gen)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/db_connectors.py", line 33, in postgres_connector
+    conn = psycopg2.connect(**dsn, cursor_factory=psycopg2.extras.RealDictCursor)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/venv/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: FATAL:  role "app" does not exist
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 100, in <module>
+    with sqlite_connector('db.sqlite') as sqlite_conn, postgres_connector(dsn) as pg_conn:
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/contextlib.py", line 135, in __enter__
+    return next(self.gen)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/db_connectors.py", line 33, in postgres_connector
+    conn = psycopg2.connect(**dsn, cursor_factory=psycopg2.extras.RealDictCursor)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/venv/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "127.0.0.1", port 5432 failed: FATAL:  role "app" does not exist
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 100, in <module>
+    with sqlite_connector('db.sqlite') as sqlite_conn, postgres_connector(dsn) as pg_conn:
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/contextlib.py", line 135, in __enter__
+    return next(self.gen)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/db_connectors.py", line 33, in postgres_connector
+    conn = psycopg2.connect(**dsn, cursor_factory=psycopg2.extras.RealDictCursor)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/venv/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: FATAL:  role "app" does not exist
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 100, in <module>
+    with sqlite_connector('db.sqlite') as sqlite_conn, postgres_connector(dsn) as pg_conn:
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/contextlib.py", line 135, in __enter__
+    return next(self.gen)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/db_connectors.py", line 33, in postgres_connector
+    conn = psycopg2.connect(**dsn, cursor_factory=psycopg2.extras.RealDictCursor)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/venv/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: FATAL:  role "app" does not exist
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 100, in <module>
+    with sqlite_connector('db.sqlite') as sqlite_conn, postgres_connector(dsn) as pg_conn:
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/contextlib.py", line 135, in __enter__
+    return next(self.gen)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/db_connectors.py", line 33, in postgres_connector
+    conn = psycopg2.connect(**dsn, cursor_factory=psycopg2.extras.RealDictCursor)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/venv/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: FATAL:  database "movies_database" does not exist
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 100, in <module>
+    with sqlite_connector('db.sqlite') as sqlite_conn, postgres_connector(dsn) as pg_conn:
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/contextlib.py", line 135, in __enter__
+    return next(self.gen)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/db_connectors.py", line 33, in postgres_connector
+    conn = psycopg2.connect(**dsn, cursor_factory=psycopg2.extras.RealDictCursor)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/venv/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: FATAL:  database "hkd" does not exist
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 100, in <module>
+    with sqlite_connector('db.sqlite') as sqlite_conn, postgres_connector(dsn) as pg_conn:
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/contextlib.py", line 135, in __enter__
+    return next(self.gen)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/db_connectors.py", line 33, in postgres_connector
+    conn = psycopg2.connect(**dsn, cursor_factory=psycopg2.extras.RealDictCursor)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/venv/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: FATAL:  database "movies_database" does not exist
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 100, in <module>
+    with sqlite_connector('db.sqlite') as sqlite_conn, postgres_connector(dsn) as pg_conn:
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/contextlib.py", line 135, in __enter__
+    return next(self.gen)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/db_connectors.py", line 33, in postgres_connector
+    conn = psycopg2.connect(**dsn, cursor_factory=psycopg2.extras.RealDictCursor)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/venv/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: FATAL:  role "app" does not exist
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 100, in <module>
+    with sqlite_connector('db.sqlite') as sqlite_conn, postgres_connector(dsn) as pg_conn:
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/contextlib.py", line 135, in __enter__
+    return next(self.gen)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/db_connectors.py", line 33, in postgres_connector
+    conn = psycopg2.connect(**dsn, cursor_factory=psycopg2.extras.RealDictCursor)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/venv/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: FATAL:  role "app" does not exist
+
+sqllite_to_postgrees - INFO - start work load data
+sqllite_to_postgrees - ERROR - Can't handle with database.
+Traceback (most recent call last):
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/load_data.py", line 100, in <module>
+    with sqlite_connector('db.sqlite') as sqlite_conn, postgres_connector(dsn) as pg_conn:
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/contextlib.py", line 135, in __enter__
+    return next(self.gen)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/03_sqlite_to_postgres/db_connectors.py", line 33, in postgres_connector
+    conn = psycopg2.connect(**dsn, cursor_factory=psycopg2.extras.RealDictCursor)
+  File "/Users/hkd/PycharmProjects/new_admin_panel_sprint_1/venv/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: FATAL:  role "app" does not exist
+
+sqllite_to_postgrees - INFO - start work load data

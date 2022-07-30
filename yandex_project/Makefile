@@ -1,19 +1,27 @@
-.PHONY: admin docker-up collect-static
+include .env
 
-go: collect-static docker-up django-setup
+.PHONY: first_start, collect-static, migrate, createsuperuser, update_db, build, up
 
+build:
+	docker-compose build
+
+up:
+	docker-compose up
 
 collect-static:
-	python3 app/manage.py collectstatic
+	docker exec yandex_project-service-1 python3 manage.py collectstatic --noinput
 
-docker-up:
-	docker compose up -d
-
-django-setup:docker-up
+migrate:
 	docker exec yandex_project-service-1 python3 manage.py migrate --fake-initial
-# при --noinput логин и пароль возмутся из переменных окружения, если юзер уже есть - упадет с ошибкой, но пойдет дальше.
-	docker exec yandex_project-service-1 python3 manage.py createsuperuser --noinput || true
 
-restart:
-	docker-compose down
-#можно добавить удаление контейнеров	
+createsuperuser:
+	docker exec yandex_project-service-1 python3 manage.py shell -c "from django.contrib.auth.models import User; User.objects.create_superuser('${DJANGO_SUPERUSER_USERNAME}', '${DJANGO_SUPERUSER_EMAIL}', '${DJANGO_SUPERUSER_PASSWORD}')"
+
+update_db:
+	docker exec elt-process bash -c "cd update_db && python3 load_data.py"
+
+delete_date_from_redis:
+	docker exec yandex_project-redis-1 redis-cli del mod_date
+
+
+first_start: collect-static migrate createsuperuser update_db delete_date_from_redis

@@ -75,12 +75,5 @@ async def film_details(film_id: str, film_service: FilmService = Depends(get_fil
     film = await film_service.get_by_id(film_id)
     if not film:
         raise message_not_found(name_object='film', id_object=film_id)
-    return Film(
-        id=film.id,
-        title=film.title,
-        actors=film.actors,
-        rating=film.rating,
-        genres=film.genres,
-        writers=film.writers,
-        directors=film.directors,
-    )
+        
+    return Film(**film.dict())

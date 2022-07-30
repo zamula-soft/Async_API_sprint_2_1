@@ -5,8 +5,6 @@ services:
     platform: linux/amd64
     build: ./db
     image: postgres:14.3-alpine
-    ports:
-      - "5432:5432"
     environment:
       - POSTGRES_USER=app
       - POSTGRES_PASSWORD=${DB_PASSWORD}
@@ -34,16 +32,16 @@ services:
       - web-static:/opt/app/static
     depends_on:
       - service
+      - fastapi
     ports:
       - "80:80"
+      - "81:81"
   redis:
     image: redis:latest
-    ports:
-      - "6379:6379"
     expose:
       - "6379"
   etl:
-    container_name: elt-proccess
+    container_name: elt-process
     build:
       context: ./postgres_to_es
     env_file:
@@ -62,8 +60,6 @@ services:
     command: python3 main.py
     volumes:
       - ./fastapi-solution:/opt/app/fastapi-solution
-    ports:
-      - "8010:8010"
     depends_on:
       - etl
   elasticsearch:
@@ -85,18 +81,18 @@ services:
       - IPC_LOCK
     volumes:
       - ./elasticsearch-data:/usr/share/elasticsearch/data
-    ports:
-      - "9200:9200"
-  kibana:
-    container_name: kibana
-    image: docker.elastic.co/kibana/kibana:7.17.4
-    restart: always
-    environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200    # address of elasticsearch docker container which kibana will connect
-    ports:
-      - "5601:5601"
-    depends_on:
-      - elasticsearch
+    expose:
+      - "9200"
+#  kibana:
+#    container_name: kibana
+#    image: docker.elastic.co/kibana/kibana:7.17.4
+#    restart: always
+#    environment:
+#      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200    # address of elasticsearch docker container which kibana will connect
+#    ports:
+#      - "5601:5601"
+#    depends_on:
+#      - elasticsearch
 
 
 volumes:

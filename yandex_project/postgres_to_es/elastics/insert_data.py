@@ -1,9 +1,7 @@
 from elasticsearch import Elasticsearch, helpers
 import backoff
 from typing import Generator, Iterable
-from psycopg2.extras import DictCursor
 
-from models import Person, Genre
 from settings import ElascticSearchDsl
 from utils import logger
 from elastics.mapping import MAPPING_FILMS, MAPPING_GENRES, MAPPING_PERSONS
@@ -11,7 +9,6 @@ from elastics.mapping import MAPPING_FILMS, MAPPING_GENRES, MAPPING_PERSONS
 FIELDS = [
     'id',
     'rating',
-    # 'genre',
     'title',
     'description',
     'directors_names',
@@ -66,7 +63,7 @@ class ESLoader:
             self.__client.indices.create(index=mapping['type'], body=mapping['mapping'])
 
 
-def generate_genres(genres: Iterable[Genre]) -> Generator[dict, None, None]:
+def generate_genres(genres: Iterable) -> Generator[dict, None, None]:
     for genre in genres:
         logger.debug('обновили или добавили genre {0}'.format(genre['id']))
         yield {
