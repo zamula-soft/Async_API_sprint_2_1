@@ -1,12 +1,16 @@
-from logging import config as logging_config
+from functools import lru_cache
 
-from core.logger import LOGGING
 from pydantic import BaseSettings, Field
+
+from logging import config as logging_config
+from core.logger import LOGGING
+
 
 # Применяем настройки логирования
 logging_config.dictConfig(LOGGING)
 
 
+@lru_cache()
 class Settings(BaseSettings):
     redis_host: str = Field(..., env='REDIS_HOST')
     redis_port: str = Field(..., env='REDIS_PORT')
