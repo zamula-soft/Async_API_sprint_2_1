@@ -24,7 +24,6 @@ def postgres_save_data(conn: connection):
     cursor = conn.cursor()
 
     for table, data_class in tables.items():
-        print(table, data_class.__slots__)
         fieldnames = list(data_class.__slots__)
         if 'created_at' in fieldnames:
             fieldnames[fieldnames.index('created_at')] = 'created'
@@ -37,7 +36,6 @@ def postgres_save_data(conn: connection):
         cursor.execute('TRUNCATE TABLE content.{table} CASCADE;'.format(table=table))
 
         sql = f'COPY content.{table} ({fild_names_str}) FROM STDIN DELIMITER \',\' QUOTE \'"\' CSV HEADER'
-        print(sql)
         cursor.copy_expert(sql, open(file_path, 'r'))
 
     cursor.close()
@@ -57,7 +55,6 @@ def sqllite_load_data(conn: sqlite3.Connection):
     cursor = conn.cursor()
     for table, data_class in tables.items():
         file_path = os.path.abspath(os.path.join(tempfile.gettempdir(), f'{table}.csv'))
-        print(file_path)
         try:
             with open(file_path, 'w', encoding='utf-8', newline='') as f:
                 fieldnames = data_class.__slots__
@@ -77,7 +74,6 @@ def sqllite_load_data(conn: sqlite3.Connection):
 
 def load_from_sqlite(sqlite_connection: sqlite3.Connection, postgres_connection: connection) -> None:
     """ Основной метод загрузки данных из SQLite в Postgres """
-    print('here')
     sqllite_load_data(sqlite_connection)
     postgres_save_data(postgres_connection)
 
@@ -93,11 +89,8 @@ if __name__ == '__main__':
         'options': '-c search_path=content'
     }
 
-    print(dsn)
-
     try:
         with sqlite_connector('db.sqlite') as sqlite_conn, postgres_connector(dsn) as pg_conn:
             load_from_sqlite(sqlite_conn, pg_conn)
     except (DatabaseError, OperationalError, sqlite3.Error, TypeError) as exc:
-        print(exc)
         logger.exception(f"Can't handle with database.\n")

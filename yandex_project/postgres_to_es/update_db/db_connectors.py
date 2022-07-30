@@ -31,11 +31,9 @@ def sqlite_connector(db_path: str) -> Generator[sqlite3.Connection, None, None]:
 @contextmanager
 def postgres_connector(dsn: dict[str, str]) -> Generator[_connection, None, None]:
     conn = psycopg2.connect(**dsn, cursor_factory=psycopg2.extras.RealDictCursor)
-    print(conn)
     try:
         yield conn
     except OperationalError as exc:
-        print(exc)
         raise exc
     finally:
         conn.close()
