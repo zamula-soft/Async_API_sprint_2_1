@@ -1,10 +1,9 @@
-from http import HTTPStatus
-
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
 from pydantic.schema import Optional, List, Dict
 
 from services.person import PersonService, get_person_service
+
 
 router = APIRouter()
 
