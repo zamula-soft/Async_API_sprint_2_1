@@ -10,19 +10,30 @@ router = APIRouter()
 
 @router.get('/', response_model=Genres)
 async def get_all_genres(
-        page_size: int = Query(ge=1, le=100, default=10),
-        page_number: int = Query(default=0, ge=0),
-        genre_service: GenreService = Depends(get_genre_service),
+        page_size: int = Query(
+            ge=1,
+            le=100,
+            default=10,
+            alias='page[size]',
+            description='Items amount on page',
+        ),
+        page_number: int = Query(
+            default=0,
+            alias='page[number]',
+            description='Page number for pagination',
+            ge=0),
         sort: str = Query(
             default='name',
             regex='^-?name',
             description='You can use only: name, -name'),
+        genre_service: GenreService = Depends(get_genre_service),
 ) -> Genres:
-    '''    Get all genres (sorted by name by default)
-        - **sort**: [name, -name]
-        - **page_size**: page size
-        - **page_number**: page number
-    '''
+    """
+    Get all genres (sorted by name by default)
+    - **sort**: [name, -name]
+    - **page_size**: page size
+    - **page_number**: page number
+    """
 
     genres = await genre_service.get_genres(page_size=page_size, page_number=page_number, order_by=sort)
     return genres
@@ -30,9 +41,10 @@ async def get_all_genres(
 
 @router.get('/{genre_id}', response_model=Genre)
 async def genre_details(genre_id: str, genre_service: GenreService = Depends(get_genre_service)) -> Genre:
-    ''' Get genre info (only genre name is available so far)
-        - **genre_id**: genre uuid
-    '''
+    """
+    Get genre info (only genre name is available so far)
+    - **genre_id**: genre uuid
+    """
     genre = await genre_service.get_by_id(genre_id)
     if not genre:
         raise message_not_found(name_object='genre', id_object=genre_id)
@@ -43,8 +55,18 @@ async def genre_details(genre_id: str, genre_service: GenreService = Depends(get
 @router.get('/{genre_id}/films/', response_model=Films)
 async def get_films_by_genre(
         genre_id: str,
-        page_size: int = Query(ge=1, le=100, default=10),
-        page_number: int = Query(default=0, ge=0),
+        page_size: int = Query(
+            ge=1,
+            le=100,
+            default=10,
+            alias='page[size]',
+            description='Items amount on page',
+        ),
+        page_number: int = Query(
+            default=0,
+            alias='page[number]',
+            description='Page number for pagination',
+            ge=0),
         sort: str = Query(
             default='-rating',
             regex='^-?(rating|title)',
@@ -56,7 +78,6 @@ async def get_films_by_genre(
     - **sort**: [rating, -rating, title, -title]
     - **page_size**: page size
     - **page_number**: page number
-
     """
     if 'title' in sort:
         sort += '.keyword'

@@ -9,19 +9,30 @@ router = APIRouter()
 
 @router.get('/', response_model=Films)
 async def get_all_movies(
-        page_size: int = Query(ge=1, le=100, default=10),
-        page_number: int = Query(default=0, ge=0),
+        page_size: int = Query(
+            ge=1,
+            le=100,
+            default=10,
+            alias='page[size]',
+            description='Items amount on page',
+        ),
+        page_number: int = Query(
+            default=0,
+            alias='page[number]',
+            description='Page number for pagination',
+            ge=0),
         sort: str = Query(
             default='-rating',
             regex='^-?(rating|title)',
             description='You can use only: rating, -rating, title, -title'),
         film_service: FilmService = Depends(get_film_service),
 ) -> Films:
-    '''    Get all movies (sorted by rating by default) 
-        - **sort**: [rating, -rating, title, -title]
-        - **page_size**: page size
-        - **page_number**: page number
-    '''
+    """
+    Get all movies (sorted by rating by default)
+    - **sort**: [rating, -rating, title, -title]
+    - **page_size**: page size
+    - **page_number**: page number
+    """
     if 'title' in sort:
         sort += '.keyword'
 
@@ -30,15 +41,28 @@ async def get_all_movies(
     return Films(pagination=films['pagination'], result=films['result'])
 
 
-@router.get('/search/', response_model=Films)
+@router.get(
+    '/search/',
+    response_model=Films,
+)
 async def search_movie_by_word(
         search_word: str,
-        page_size: int = Query(ge=1, le=100, default=10),
-        page_number: int = Query(default=0, ge=0),
+        page_size: int = Query(
+            ge=1,
+            le=100,
+            default=10,
+            alias='page[size]',
+            description='Items amount on page',
+        ),
+        page_number: int = Query(
+            default=0,
+            alias='page[number]',
+            description='Page number for pagination',
+            ge=0),
         film_service: FilmService = Depends(get_film_service)
 ) -> Films:
     """
-    Search film by word in title 
+    Search film by word in title
     - **search_word**: search word
     - **page_size**: page size
     - **page_number**: page number

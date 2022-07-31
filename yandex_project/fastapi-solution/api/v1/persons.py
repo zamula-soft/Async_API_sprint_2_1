@@ -10,13 +10,23 @@ router = APIRouter()
 
 @router.get('/', response_model=Persons)
 async def get_all_persons(
-        page_size: int = Query(ge=1, le=100, default=10),
-        page_number: int = Query(default=0, ge=0),
-        service: PersonService = Depends(get_person_service),
+        page_size: int = Query(
+            ge=1,
+            le=100,
+            default=10,
+            alias='page[size]',
+            description='Items amount on page',
+        ),
+        page_number: int = Query(
+            default=0,
+            alias='page[number]',
+            description='Page number for pagination',
+            ge=0),
         sort: str = Query(
             default='-full_name',
             regex='^-?full_name',
             description='You can use only: full_name, -full_name'),
+        service: PersonService = Depends(get_person_service),
 ) -> Persons:
     """
     Get all persons (sorted by name by default).
@@ -47,8 +57,18 @@ async def person_details(person_id: str, service: PersonService = Depends(get_pe
 @router.get('/{person_id}/films/', response_model=Films)
 async def get_films_by_person(
         person_id: str,
-        page_size: int = Query(ge=1, le=100, default=10),
-        page_number: int = Query(default=0, ge=0),
+        page_size: int = Query(
+            ge=1,
+            le=100,
+            default=10,
+            alias='page[size]',
+            description='Items amount on page',
+        ),
+        page_number: int = Query(
+            default=0,
+            alias='page[number]',
+            description='Page number for pagination',
+            ge=0),
         sort: str = Query(
             default='-rating',
             regex='^-?(rating|title)',
