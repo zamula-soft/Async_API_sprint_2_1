@@ -128,55 +128,10 @@ class FilmService:
         await self.redis.set(film_id, film.json(), expire=FILM_CACHE_EXPIRE_IN_SECONDS)
 
 
-class FilmMixin():
-
-    def __init__(self):
-        self.model = Film
-        self.name = f'api_cache::elastic::movies::'
-
-
-class GetFromCacheByID:
-    """Service for get data from elasticsearch or redis"""
-
-    def __init__(self, redis: Redis) -> None:
-        """
-        Init.
-        :param redis: connect to Redis
-        """
-        self.redis = redis
-        super().__init__()
-
-    async def get_by_id(self, film_id: str) -> Optional[Film]:
-        print('start')
-        print(self.model)
-        self.name += film_id
-        film = await self._film_from_cache()
-
-        return film
-
-    async def _film_from_cache(self) -> Optional[Film]:
-        data = await self.redis.get(self.name)
-        print(data)
-        if not data:
-            return None
-
-        film = self.model.parse_raw(data)
-        return film
-
-    async def _put_film_to_cache(self, film: Film) -> None:
-        await self.redis.set(self.name, film.json(), expire=FILM_CACHE_EXPIRE_IN_SECONDS)
-
-
 @lru_cache()
 def get_film_service(
         redis: Redis = Depends(get_redis),
-) -> GetFromCacheByID:
-    return GetFromCacheByID(redis)
-
-# @lru_cache()
-# def get_film_service(
-#         redis: Redis = Depends(get_redis),
-#         elastic: AsyncElasticsearch = Depends(get_elastic),
-# ) -> FilmService:
-#     return FilmService(redis, elastic)
+        elastic: AsyncElasticsearch = Depends(get_elastic),
+) -> FilmService:
+    return FilmService(redis, elastic)
 
