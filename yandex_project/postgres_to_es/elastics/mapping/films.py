@@ -1,4 +1,5 @@
 MAPPING_FILMS = {
+
     "mappings": {
         "properties": {
             "actors": {
