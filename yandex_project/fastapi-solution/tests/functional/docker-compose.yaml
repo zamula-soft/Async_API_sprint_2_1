@@ -1,0 +1,56 @@
+version: '3'
+services:
+  fastapi:
+    build:
+      context: ../../../fastapi-solution
+    image: fastapi-image
+    ports:
+      - "8005:8010"
+    command: python3 main.py
+    volumes:
+      - ../../../fastapi-solution:/opt/app/fastapi-solution
+    depends_on:
+      - elasticsearch-test
+      - redis-test
+    env_file:
+      - .env_test
+  elasticsearch-test:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.4
+    container_name: elasticsearch-test
+    restart: always
+    environment:
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms200m -Xmx200m
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - ./elasticsearch-data:/usr/share/elasticsearch/data
+    ports:
+      - "9201:9200"
+    expose:
+      - "9201"
+  redis-test:
+    container_name: redis-test
+    image: redis:latest
+    ports:
+      - "6378:6379"
+    expose:
+      - "6378"
+  tests:
+    build:
+      context: ../../
+      dockerfile: tests/functional/Dockerfile
+    entrypoint: >
+      sh -c "ls && python3 functional/utils/wait_for_es.py
+      && python3 functional/utils/wait_for_redis.py
+      && pytest src"
+    depends_on:
+      - fastapi

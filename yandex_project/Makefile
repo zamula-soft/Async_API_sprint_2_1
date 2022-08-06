@@ -1,6 +1,6 @@
 include .env
 
-.PHONY: first_start, collect-static, migrate, createsuperuser, update_db, build, up
+.PHONY: first_start, collect-static, migrate, createsuperuser, update_db, build, up, build_tests, start_tests
 
 build:
 	docker-compose build
@@ -22,6 +22,12 @@ update_db:
 
 delete_date_from_redis:
 	docker exec yandex_project-redis-1 redis-cli del mod_date
+
+build_tests:
+	cd fastapi-solution/tests/functional && docker-compose build
+
+start_tests:
+	cd fastapi-solution/tests/functional && docker-compose up
 
 
 first_start: collect-static migrate createsuperuser update_db delete_date_from_redis
