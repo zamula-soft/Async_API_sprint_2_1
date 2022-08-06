@@ -1,3 +1,0 @@
-services:
-  fastapi:
-    image: yandex_project_fastapi
