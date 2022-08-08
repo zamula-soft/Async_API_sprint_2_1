@@ -2,13 +2,13 @@ version: '3'
 services:
   fastapi:
     build:
-      context: ../../../fastapi-solution
+      context: ../../fastapi-solution
     image: fastapi-image
     ports:
       - "8005:8010"
     command: python3 main.py
     volumes:
-      - ../../../fastapi-solution:/opt/app/fastapi-solution
+      - ../../fastapi-solution:/opt/app/fastapi-solution
     depends_on:
       - elasticsearch-test
       - redis-test
@@ -46,11 +46,13 @@ services:
       - "6378"
   tests:
     build:
-      context: ../../
-      dockerfile: tests/functional/Dockerfile
+      context: ..
+      dockerfile: ./functional/Dockerfile
     entrypoint: >
-      sh -c "ls && python3 functional/utils/wait_for_es.py
-      && python3 functional/utils/wait_for_redis.py
-      && pytest src"
+      sh -c "ls && pytest functional/src"
     depends_on:
       - fastapi
+    volumes:
+      - ../:/tests
+    env_file:
+      - .env_test
