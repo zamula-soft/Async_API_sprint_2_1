@@ -16,86 +16,19 @@ FILM_CACHE_EXPIRE_IN_SECONDS = 60 * 5  # 5 минут
 class FilmService:
     """Service for get data from elasticsearch or redis"""
 
-    def __init__(self, redis: Redis, elastic: AsyncElasticsearch) -> None:
+    def __init__(self, elastic: AsyncElasticsearch) -> None:
         """
         Init.
-        :param redis: connect to Redis
         :param elastic: connect to Elasticsearch
         """
-        self.redis = redis
+
         self.elastic = elastic
 
-    # get_by_id возвращает объект фильма. Он опционален, так как фильм может отсутствовать в базе
-    async def get_by_id(self, film_id: str) -> Optional[Film]:
-        """
-        Get film by id.
-        :param film_id: Film id.
-        :return: Model Film
-        """
-        # Пытаемся получить данные из кеша, потому что оно работает быстрее
-        film = await self._film_from_cache(film_id)
-        print('cache', film)
-        if not film:
-            # Если фильма нет в кеше, то ищем его в Elasticsearch
-            film = await self._get_film_from_elastic(film_id)
-            if not film:
-                # Если он отсутствует в Elasticsearch, значит, фильма вообще нет в базе
-                return None
-            # Сохраняем фильм в кеш
-            await self._put_film_to_cache(film)
-        return film
 
-    async def get_by_search_word(self, search_word: str, page_size: int = 10, page_number: int = 0):
+class Cache:
 
-        elastic_query = {
-            "size": page_size,
-            "from": page_number * page_size,
-            "query": {
-                "match": {
-                    "title": {
-                        "query": search_word
-                    }
-                }
-            }
-        }
-        resp = await self.elastic.search(index='movies', body=elastic_query)
-
-        return get_result(resp, page_size, page_number, Film)
-
-    async def get_films(self, page_size: int = 10, page_number: int = 0, order_by: str = '-rating'):
-
-        order = 'asc'
-        if order_by.startswith('-'):
-            order = 'desc'
-            order_by = order_by[1:]
-
-        elastic_query = {
-            "size": page_size,
-            "from": page_number * page_size,
-            "sort": [
-                {
-                    order_by: {
-                        "order": order,
-                    }
-                }
-            ]
-        }
-
-        resp = await self.elastic.search(index='movies', body=elastic_query)
-
-        return get_result(resp, page_size, page_number, Film)
-
-    async def _get_film_from_elastic(self, film_id: str) -> Optional[Film]:
-        """
-        Get film from elasticsearch by film id.
-        :param film_id: Film id.
-        :return: Model Film.
-        """
-        try:
-            doc = await self.elastic.get('movies', film_id)
-        except NotFoundError:
-            return None
-        return Film(**doc['_source'])
+    def __init__(self, redis: Redis):
+        self.redis = redis
 
     async def _film_from_cache(self, film_id: str) -> Optional[Film]:
         """
@@ -128,10 +61,112 @@ class FilmService:
         await self.redis.set(film_id, film.json(), expire=FILM_CACHE_EXPIRE_IN_SECONDS)
 
 
+class FilmServiceGetByID(FilmService, Cache):
+
+    def __init__(self, redis: Redis, elastic: AsyncElasticsearch) -> None:
+        """
+        Init.
+        :param redis: connect to Redis
+        :param elastic: connect to Elasticsearch
+        """
+        super(FilmServiceGetByID, self).__init__(elastic=elastic)
+        self.redis = redis
+
+    async def get(self, film_id: str) -> Optional[Film]:
+        """
+        Get film by id.
+        :param film_id: Film id.
+        :return: Model Film
+        """
+        # Пытаемся получить данные из кеша, потому что оно работает быстрее
+        film = await self._film_from_cache(film_id)
+        if not film:
+            # Если фильма нет в кеше, то ищем его в Elasticsearch
+            film = await self._get_film_from_elastic(film_id)
+            if not film:
+                # Если он отсутствует в Elasticsearch, значит, фильма вообще нет в базе
+                return None
+            # Сохраняем фильм в кеш
+            await self._put_film_to_cache(film)
+        return film
+
+    async def _get_film_from_elastic(self, film_id: str) -> Optional[Film]:
+        """
+        Get film from elasticsearch by film id.
+        :param film_id: Film id.
+        :return: Model Film.
+        """
+        try:
+            doc = await self.elastic.get('movies', film_id)
+        except NotFoundError:
+            return None
+        return Film(**doc['_source'])
+
+
+class FilmServiceSearch(FilmService):
+
+    async def get(self, search_word: str, page_size: int = 10, page_number: int = 0):
+
+        elastic_query = {
+            "size": page_size,
+            "from": page_number * page_size,
+            "query": {
+                "match": {
+                    "title": {
+                        "query": search_word
+                    }
+                }
+            }
+        }
+        resp = await self.elastic.search(index='movies', body=elastic_query)
+
+        return get_result(resp, page_size, page_number, Film)
+
+
+class FilmServiceGetFilms(FilmService):
+
+    async def get(self, page_size: int = 10, page_number: int = 0, order_by: str = '-rating'):
+
+        order = 'asc'
+        if order_by.startswith('-'):
+            order = 'desc'
+            order_by = order_by[1:]
+
+        elastic_query = {
+            "size": page_size,
+            "from": page_number * page_size,
+            "sort": [
+                {
+                    order_by: {
+                        "order": order,
+                    }
+                }
+            ]
+        }
+
+        resp = await self.elastic.search(index='movies', body=elastic_query)
+
+        return get_result(resp, page_size, page_number, Film)
+
+
 @lru_cache()
-def get_film_service(
+def get_film_service_get_by_id(
         redis: Redis = Depends(get_redis),
         elastic: AsyncElasticsearch = Depends(get_elastic),
 ) -> FilmService:
-    return FilmService(redis, elastic)
+    return FilmServiceGetByID(elastic=elastic, redis=redis)
+
+
+@lru_cache()
+def get_film_service_get_films(
+        elastic: AsyncElasticsearch = Depends(get_elastic),
+) -> FilmService:
+    return FilmServiceGetFilms(elastic)
+
+
+@lru_cache()
+def get_film_service_search_film(
+        elastic: AsyncElasticsearch = Depends(get_elastic),
+) -> FilmService:
+    return FilmServiceSearch(elastic)
 

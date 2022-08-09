@@ -1,6 +1,12 @@
 from fastapi import APIRouter, Depends, Query
 
-from services.film import FilmService, get_film_service
+from services.film import (
+    FilmServiceSearch,
+    FilmServiceGetFilms,
+    FilmServiceGetByID,
+    get_film_service_search_film,
+    get_film_service_get_films,
+    get_film_service_get_by_id)
 from api.v1.messges import message_not_found
 from api.v1.models import Film, Films
 
@@ -25,7 +31,7 @@ async def get_all_movies(
             default='-rating',
             regex='^-?(rating|title)',
             description='You can use only: rating, -rating, title, -title'),
-        film_service: FilmService = Depends(get_film_service),
+        film_service: FilmServiceGetFilms = Depends(get_film_service_get_films),
 ) -> Films:
     """
     Get all movies (sorted by rating by default)
@@ -36,7 +42,7 @@ async def get_all_movies(
     if 'title' in sort:
         sort += '.keyword'
 
-    films = await film_service.get_films(page_size=page_size, page_number=page_number, order_by=sort)
+    films = await film_service.get(page_size=page_size, page_number=page_number, order_by=sort)
 
     return Films(pagination=films['pagination'], result=films['result'])
 
@@ -59,7 +65,7 @@ async def search_movie_by_word(
             alias='page[number]',
             description='Page number for pagination',
             ge=0),
-        film_service: FilmService = Depends(get_film_service)
+        film_service: FilmServiceSearch = Depends(get_film_service_search_film)
 ) -> Films:
     """
     Search film by word in title
@@ -68,19 +74,19 @@ async def search_movie_by_word(
     - **page_number**: page number
 
     """
-    films = await film_service.get_by_search_word(search_word, page_size=page_size, page_number=page_number)
+    films = await film_service.get(search_word, page_size=page_size, page_number=page_number)
 
     return Films(pagination=films['pagination'], result=films['result'])
 
 
 # Внедряем FilmService с помощью Depends(get_film_service)
 @router.get('/{film_id}/', response_model=Film)
-async def film_details(film_id: str, film_service: FilmService = Depends(get_film_service)) -> Film:
+async def film_details(film_id: str, film_service: FilmServiceGetByID = Depends(get_film_service_get_by_id)) -> Film:
     """
     Get film by id with all the information.
     - **film_id**: film uuid
     """
-    film = await film_service.get_by_id(film_id)
+    film = await film_service.get(film_id)
     if not film:
         raise message_not_found(name_object='film', id_object=film_id)
         
