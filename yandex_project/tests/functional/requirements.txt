@@ -8,3 +8,4 @@ pydantic==1.9.0
 aioredis==2.0.1
 elasticsearch[async]==7.9.1
 pydantic==1.9.0
+backoff==1.11.1

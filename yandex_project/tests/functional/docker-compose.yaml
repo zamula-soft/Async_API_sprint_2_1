@@ -49,7 +49,7 @@ services:
       context: ..
       dockerfile: ./functional/Dockerfile
     entrypoint: >
-      sh -c "pytest functional/src"
+      sh -c "python3 main.py && pytest functional/src"
     depends_on:
       - fastapi
     volumes:
