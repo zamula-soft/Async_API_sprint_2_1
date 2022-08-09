@@ -18,9 +18,7 @@ movies = [
         "title": "Star Wars: Extintion",
         "description": None,
         "type": "movie",
-        "creation_date": "2021-06-16T20:14:09.256104+00:00",
         "rating": 6.9,
-        "modified": "2021-06-16T20:14:09.256120+00:00",
         "directors": [
             {"id": "93d29db7-6a25-437b-a557-1644e9d2ea02", "name": "Alejandro Beltrán"}
         ],
@@ -45,9 +43,7 @@ movies = [
         "title": "Star Wars SC 38 Reimagined",
         "description": '"Scene 38 ReImagined" is about the final confrontation between Ben Kenobi and Darth Vader in "A New Hope" nearly 20 years after the events of "Revenge Of The Sith." This is a one-off story ...',
         "type": "movie",
-        "creation_date": "2021-06-16T20:14:09.256203+00:00",
         "rating": 9.5,
-        "modified": "2021-06-16T20:14:09.256219+00:00",
         "directors": [
             {"id": "819d6587-4a88-4b25-b734-c894f7ce4ab0", "name": "Philip J Silvera"}
         ],
@@ -66,9 +62,7 @@ movies = [
         "title": "Hedy Lamarr: Secrets of a Hollywood Star",
         "description": None,
         "type": "movie",
-        "creation_date": "2021-06-16T20:14:09.256300+00:00",
         "rating": 6.7,
-        "modified": "2021-06-16T20:14:09.256315+00:00",
         "directors": [
             {"id": "5782e26f-62c8-4071-960d-be03ed030b47", "name": "Barbara Obermaier"},
             {"id": "666325e3-f098-40d3-b6d9-77d551836927", "name": "Fosco Dubini"},
