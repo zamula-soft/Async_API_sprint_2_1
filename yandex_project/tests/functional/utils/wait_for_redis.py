@@ -1,7 +1,17 @@
-def wait_for_redis():
-    """
-    Необходимо дождаться, пока Redis ответит на ping()
-    """
-    pass
+from backoff import on_exception, expo
+from redis import Redis
 
-wait_for_redis()
+from functional.core.settings import TestSettings
+
+settings = TestSettings()
+
+
+@on_exception(expo, BaseException)
+def wait_for_redis():
+    client = Redis(settings.redis_host, int(settings.redis_port))
+
+    ping = client.ping()
+
+    if ping:
+        return ping
+    raise Exception
