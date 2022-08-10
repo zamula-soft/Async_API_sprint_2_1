@@ -6,10 +6,10 @@ import pytest
 from functional.testdata import movies, movies_index
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope='session')
 async def create_index(es_client):
-    await es_client.indices.delete(index="movies")
-    await es_client.indices.create(index="movies", body=movies_index)
+    await es_client.indices.delete(index='movies')
+    await es_client.indices.create(index='movies', body=movies_index)
 
     create_actions = []
     delete_actions = []
@@ -17,43 +17,43 @@ async def create_index(es_client):
     for film in movies:
         delete_actions.append(
             {
-                "delete": {
-                    '_index': f'movies',
-                    "_id": film["id"],
+                'delete': {
+                    '_index': 'movies',
+                    '_id': film['id'],
                 }
             }
         )
         create_actions.extend(
             (
                 {
-                    "index": {
-                        "_index": f"movies",
-                        "_id": f"{film['id']}"
+                    'index': {
+                        '_index': 'movies',
+                        '_id': film['id']
                     }
                 },
                 film,
             )
         )
 
-    await es_client.bulk(create_actions, refresh="true")
-    yield "create tests data"
-    await es_client.bulk(delete_actions, refresh="true")
+    await es_client.bulk(create_actions, refresh='true')
+    yield 'create tests data'
+    await es_client.bulk(delete_actions, refresh='true')
 
 
 @pytest.mark.asyncio
 async def test_film_detailed(create_index, make_get_request, redis_client):
     data = movies[0]
-    film_id = data["id"]
-    response = await make_get_request(f"/films/{film_id}", params={})
+    film_id = data['id']
+    response = await make_get_request(f'/films/{film_id}', params={})
 
     assert response.status == HTTPStatus.OK
-    assert response.body["id"] == data["id"]
-    assert response.body["title"] == data["title"]
-    assert response.body["rating"] == data["rating"]
-    assert response.body["genres"] == data["genres"]
-    assert response.body["actors"] == data["actors"]
-    assert response.body["writers"] == data["writers"]
-    assert response.body["directors"] == data["directors"]
+    assert response.body['id'] == data['id']
+    assert response.body['title'] == data['title']
+    assert response.body['rating'] == data['rating']
+    assert response.body['genres'] == data['genres']
+    assert response.body['actors'] == data['actors']
+    assert response.body['writers'] == data['writers']
+    assert response.body['directors'] == data['directors']
 
     movies_from_cache = redis_client.get(f'api_cache::elastic::movies::{film_id}')
     movies_from_cache = json.loads(movies_from_cache.decode('utf-8'))
@@ -63,15 +63,15 @@ async def test_film_detailed(create_index, make_get_request, redis_client):
 
 @pytest.mark.asyncio
 async def test_get_film(make_get_request):
-    response = await make_get_request("/films/unknown")
+    response = await make_get_request('/films/unknown')
 
     assert response.status == HTTPStatus.NOT_FOUND
-    assert response.body["detail"] == "film with uuid unknown not found."
+    assert response.body['detail'] == 'film with uuid unknown not found.'
 
 
 @pytest.mark.asyncio
 async def test_get_films(make_get_request):
-    response = await make_get_request("/films")
+    response = await make_get_request('/films')
 
     result = response.body['result']
 
@@ -82,7 +82,7 @@ async def test_get_films(make_get_request):
 @pytest.mark.asyncio
 async def test_get_films_pagination(make_get_request):
     params = {'page[size]': 1}
-    response = await make_get_request("/films", params=params)
+    response = await make_get_request('/films', params=params)
 
     result = response.body['result']
 
@@ -94,7 +94,7 @@ async def test_get_films_pagination(make_get_request):
 @pytest.mark.asyncio
 async def test_get_films_order(make_get_request):
     params = {'page[size]': 1, 'sort': 'rating'}
-    response = await make_get_request("/films", params=params)
+    response = await make_get_request('/films', params=params)
 
     result = response.body['result']
 
