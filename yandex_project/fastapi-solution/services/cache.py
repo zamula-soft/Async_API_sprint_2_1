@@ -8,7 +8,8 @@ from models import Film, Person, Genre
 CACHE_EXPIRE_IN_SECONDS = 60 * 5  # 5 минут
 
 
-class Cache:
+class RedisCache:
+    """Work with cache from Redis"""
 
     def __init__(self, redis: Redis, name_model: str, model: Type[Union[Film, Person, Genre]]):
         """Init."""

@@ -1,4 +1,5 @@
 def create_pagination(resp, page_size, page_number):
+    """Function for create pagination."""
     total_entities_count = resp['hits']['total']['value']
     last_page = int(total_entities_count) // page_size - 1 if int(
         total_entities_count) % page_size == 0 else int(total_entities_count) // page_size
@@ -16,6 +17,7 @@ def create_pagination(resp, page_size, page_number):
 
 
 def get_result(resp, page_size, page_number, model):
+    """Function for create result."""
     result = create_pagination(resp, page_size, page_number)
 
     items = resp['hits']['hits']

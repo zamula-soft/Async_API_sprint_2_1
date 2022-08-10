@@ -5,7 +5,7 @@ from elasticsearch import AsyncElasticsearch, NotFoundError
 from backoff import on_exception, expo
 
 from models import Film, Person, Genre
-from .cache import Cache
+from .cache import RedisCache
 
 
 class Service:
@@ -25,8 +25,8 @@ class Service:
             raise ConnectionError
 
 
-class ServiceGetByID(Service, Cache):
-
+class ServiceGetByID(Service, RedisCache):
+    """Service for get item by id."""
     def __init__(
             self,
             redis: Redis,

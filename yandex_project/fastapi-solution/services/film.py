@@ -1,4 +1,5 @@
 from functools import lru_cache
+from typing import Dict
 
 from aioredis import Redis
 from elasticsearch import AsyncElasticsearch
@@ -12,8 +13,16 @@ from .service import Service, ServiceGetByID
 
 
 class FilmServiceSearch(Service):
+    """Service for find film."""
 
-    async def get(self, search_word: str, page_size: int = 10, page_number: int = 0):
+    async def get(self, search_word: str, page_size: int = 10, page_number: int = 0) -> Dict:
+        """
+        Get film by keywords.
+        :param search_word: keywords.
+        :param page_size: count items on page.
+        :param page_number: number of page.
+        :return:
+        """
 
         await self.check_elastic_connection()
 
@@ -34,8 +43,16 @@ class FilmServiceSearch(Service):
 
 
 class FilmServiceGetFilms(Service):
+    """Service for get all films."""
 
     async def get(self, page_size: int = 10, page_number: int = 0, order_by: str = '-rating'):
+        """
+        Get all films.
+        :param page_size: count items on page.
+        :param page_number: number of page.
+        :param order_by: sorting by rating or title
+        :return:
+        """
 
         await self.check_elastic_connection()
 
