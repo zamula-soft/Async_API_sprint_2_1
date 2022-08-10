@@ -9,8 +9,7 @@ from db.elastic import get_elastic
 from db.redis import get_redis
 from models import Film
 from .result import get_result
-
-FILM_CACHE_EXPIRE_IN_SECONDS = 60 * 5  # 5 минут
+from .cache import Cache
 
 
 class FilmService:
@@ -25,45 +24,19 @@ class FilmService:
         self.elastic = elastic
 
 
-class Cache:
-
-    def __init__(self, redis: Redis):
-        self.redis = redis
-
-    async def _film_from_cache(self, film_id: str) -> Optional[Film]:
-        """
-        Get film from Redis.
-        :param film_id: Film id.
-        :return: Model Film
-        """
-        film_id = f'api_cache::elastic::movies::{film_id}'
-        data = await self.redis.get(film_id)
-        if not data:
-            return None
-
-        film = Film.parse_raw(data)
-        return film
-
-    async def _put_film_to_cache(self, film: Film) -> None:
-        """
-        Save film to Redis. Create cache.
-        :param film: Model Film
-        :return:
-        """
-        film_id = f'api_cache::elastic::movies::{film.id}'
-        await self.redis.set(film_id, film.json(), expire=FILM_CACHE_EXPIRE_IN_SECONDS)
-
-
 class FilmServiceGetByID(FilmService, Cache):
 
-    def __init__(self, redis: Redis, elastic: AsyncElasticsearch) -> None:
+    def __init__(self, redis: Redis, elastic: AsyncElasticsearch, name_model: str, model: Film) -> None:
         """
         Init.
         :param redis: connect to Redis
         :param elastic: connect to Elasticsearch
         """
         super(FilmServiceGetByID, self).__init__(elastic=elastic)
+        # Это место мне не очень нравится, но я не знаю, как сделать лучше.
         self.redis = redis
+        self.name_model = name_model
+        self.model = model
 
     async def get(self, film_id: str) -> Optional[Film]:
         """
@@ -143,7 +116,7 @@ def get_film_service_get_by_id(
         redis: Redis = Depends(get_redis),
         elastic: AsyncElasticsearch = Depends(get_elastic),
 ) -> FilmService:
-    return FilmServiceGetByID(elastic=elastic, redis=redis)
+    return FilmServiceGetByID(elastic=elastic, redis=redis, name_model='movies', model=Film)
 
 
 @lru_cache()
