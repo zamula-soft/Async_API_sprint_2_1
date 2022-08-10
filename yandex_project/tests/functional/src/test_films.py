@@ -109,3 +109,22 @@ async def test_get_films_order(make_get_request):
     assert response.status == HTTPStatus.OK
     assert len(result) == 1
     assert result[0]['rating'] == data['rating']
+
+
+@pytest.mark.asyncio
+async def test_search_films(make_get_request):
+    """Tests search films."""
+    params = {'search_word': 'Hedy'}
+    response = await make_get_request('/films/search/', params=params)
+
+    result = response.body['result']
+    data = movies[2]
+    assert response.status == HTTPStatus.OK
+    assert len(result) == 1
+    assert result[0]['title'] == data['title']
+
+    params = {'search_word': 'Star'}
+    response = await make_get_request('/films/search/', params=params)
+    result = response.body['result']
+    assert response.status == HTTPStatus.OK
+    assert len(result) == 3
