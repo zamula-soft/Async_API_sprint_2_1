@@ -65,6 +65,18 @@ make first_start
 - DJANGO_SUPERUSER_PASSWORD - password for Django admin panel
 - DJANGO_SUPERUSER_EMAIL - email for Django admin
 
+## Tests:
+Build tests
+```shell
+make build_tests
+```
+
+Start tests
+```shell
+make start_tests
+```
+
 ## Team:
 1. Pavel Gaiduk
-2. Kirill Bondar
+2. Ivan Zamula
+3. Kirill Bondar until 29.07.2022
