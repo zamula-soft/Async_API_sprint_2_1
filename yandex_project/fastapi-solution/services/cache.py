@@ -3,7 +3,7 @@ from typing import Optional, Union, Type
 from aioredis import Redis
 from models import Film, Person, Genre
 
-FILM_CACHE_EXPIRE_IN_SECONDS = 60 * 5  # 5 минут
+CACHE_EXPIRE_IN_SECONDS = 60 * 5  # 5 минут
 
 
 class Cache:
@@ -33,4 +33,4 @@ class Cache:
         :return:
         """
         item_id = f'api_cache::elastic::{self.name_model}::{item.id}'
-        await self.redis.set(item_id, item.json(), expire=FILM_CACHE_EXPIRE_IN_SECONDS)
+        await self.redis.set(item_id, item.json(), expire=CACHE_EXPIRE_IN_SECONDS)
