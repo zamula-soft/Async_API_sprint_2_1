@@ -8,6 +8,7 @@ from functional.testdata import movies, movies_index
 
 @pytest.fixture(scope='session')
 async def create_index(es_client):
+    """Create and delete films indexes"""
     await es_client.indices.delete(index='movies')
     await es_client.indices.create(index='movies', body=movies_index)
 
@@ -42,6 +43,7 @@ async def create_index(es_client):
 
 @pytest.mark.asyncio
 async def test_film_detailed(create_index, make_get_request, redis_client):
+    """Tests get film by id and test save film to cache."""
     data = movies[0]
     film_id = data['id']
     response = await make_get_request(f'/films/{film_id}', params={})
@@ -63,6 +65,7 @@ async def test_film_detailed(create_index, make_get_request, redis_client):
 
 @pytest.mark.asyncio
 async def test_get_film(make_get_request):
+    """Tests wrong get film with wrong id."""
     response = await make_get_request('/films/unknown')
 
     assert response.status == HTTPStatus.NOT_FOUND
@@ -71,6 +74,7 @@ async def test_get_film(make_get_request):
 
 @pytest.mark.asyncio
 async def test_get_films(make_get_request):
+    """Tests get all films."""
     response = await make_get_request('/films')
 
     result = response.body['result']
@@ -81,6 +85,7 @@ async def test_get_films(make_get_request):
 
 @pytest.mark.asyncio
 async def test_get_films_pagination(make_get_request):
+    """Tests work pagination."""
     params = {'page[size]': 1}
     response = await make_get_request('/films', params=params)
 
@@ -93,6 +98,7 @@ async def test_get_films_pagination(make_get_request):
 
 @pytest.mark.asyncio
 async def test_get_films_order(make_get_request):
+    """Tests work ordering."""
     params = {'page[size]': 1, 'sort': 'rating'}
     response = await make_get_request('/films', params=params)
 
