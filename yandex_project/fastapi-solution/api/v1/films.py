@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, Query
 from services.film import (
     FilmServiceSearch,
     FilmServiceGetFilms,
-    FilmServiceGetByID,
+    ServiceGetByID,
     get_film_service_search_film,
     get_film_service_get_films,
     get_film_service_get_by_id)
@@ -81,7 +81,7 @@ async def search_movie_by_word(
 
 # Внедряем FilmService с помощью Depends(get_film_service)
 @router.get('/{film_id}/', response_model=Film)
-async def film_details(film_id: str, film_service: FilmServiceGetByID = Depends(get_film_service_get_by_id)) -> Film:
+async def film_details(film_id: str, film_service: ServiceGetByID = Depends(get_film_service_get_by_id)) -> Film:
     """
     Get film by id with all the information.
     - **film_id**: film uuid
