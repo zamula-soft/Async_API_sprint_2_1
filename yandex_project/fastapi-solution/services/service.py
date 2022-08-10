@@ -2,6 +2,7 @@ from typing import Optional, Type, Union
 
 from aioredis import Redis
 from elasticsearch import AsyncElasticsearch, NotFoundError
+from backoff import on_exception, expo
 
 from models import Film, Person, Genre
 from .cache import Cache
@@ -16,6 +17,12 @@ class Service:
         :param elastic: connect to Elasticsearch
         """
         self.elastic = elastic
+
+    @on_exception(expo, BaseException)
+    async def check_elastic_connection(self) -> None:
+        """Check work elastic."""
+        if not self.elastic.ping():
+            raise ConnectionError
 
 
 class ServiceGetByID(Service, Cache):
@@ -46,6 +53,7 @@ class ServiceGetByID(Service, Cache):
         :param item_id: Item id.
         :return: Model
         """
+
         item = await self._from_cache(item_id)
         if not item:
             item = await self._get_from_elastic(item_id)
@@ -60,6 +68,8 @@ class ServiceGetByID(Service, Cache):
         :param item_id: Item id.
         :return: Model.
         """
+        await self.check_elastic_connection()
+
         try:
             doc = await self.elastic.get(self.name_model, item_id)
         except NotFoundError:

@@ -15,6 +15,8 @@ class FilmServiceSearch(Service):
 
     async def get(self, search_word: str, page_size: int = 10, page_number: int = 0):
 
+        await self.check_elastic_connection()
+
         elastic_query = {
             "size": page_size,
             "from": page_number * page_size,
@@ -34,6 +36,8 @@ class FilmServiceSearch(Service):
 class FilmServiceGetFilms(Service):
 
     async def get(self, page_size: int = 10, page_number: int = 0, order_by: str = '-rating'):
+
+        await self.check_elastic_connection()
 
         order = 'asc'
         if order_by.startswith('-'):
