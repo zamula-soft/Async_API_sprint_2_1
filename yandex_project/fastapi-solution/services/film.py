@@ -1,5 +1,5 @@
 from functools import lru_cache
-from typing import Optional
+from typing import Optional, Type
 
 from aioredis import Redis
 from elasticsearch import AsyncElasticsearch, NotFoundError
@@ -10,27 +10,18 @@ from db.redis import get_redis
 from models import Film
 from .result import get_result
 from .cache import Cache
+from .service import Service
 
 
-class FilmService:
-    """Service for get data from elasticsearch or redis"""
+class FilmServiceGetByID(Service, Cache):
 
-    def __init__(self, elastic: AsyncElasticsearch) -> None:
-        """
-        Init.
-        :param elastic: connect to Elasticsearch
-        """
-
-        self.elastic = elastic
-
-
-class FilmServiceGetByID(FilmService, Cache):
-
-    def __init__(self, redis: Redis, elastic: AsyncElasticsearch, name_model: str, model: Film) -> None:
+    def __init__(self, redis: Redis, elastic: AsyncElasticsearch, name_model: str, model: Type[Film]) -> None:
         """
         Init.
         :param redis: connect to Redis
         :param elastic: connect to Elasticsearch
+        :param name_model: name model for redis
+        :param model: Model
         """
         super(FilmServiceGetByID, self).__init__(elastic=elastic)
         # Это место мне не очень нравится, но я не знаю, как сделать лучше.
@@ -65,7 +56,7 @@ class FilmServiceGetByID(FilmService, Cache):
         return Film(**doc['_source'])
 
 
-class FilmServiceSearch(FilmService):
+class FilmServiceSearch(Service):
 
     async def get(self, search_word: str, page_size: int = 10, page_number: int = 0):
 
@@ -85,7 +76,7 @@ class FilmServiceSearch(FilmService):
         return get_result(resp, page_size, page_number, Film)
 
 
-class FilmServiceGetFilms(FilmService):
+class FilmServiceGetFilms(Service):
 
     async def get(self, page_size: int = 10, page_number: int = 0, order_by: str = '-rating'):
 
@@ -115,20 +106,20 @@ class FilmServiceGetFilms(FilmService):
 def get_film_service_get_by_id(
         redis: Redis = Depends(get_redis),
         elastic: AsyncElasticsearch = Depends(get_elastic),
-) -> FilmService:
+) -> FilmServiceGetByID:
     return FilmServiceGetByID(elastic=elastic, redis=redis, name_model='movies', model=Film)
 
 
 @lru_cache()
 def get_film_service_get_films(
         elastic: AsyncElasticsearch = Depends(get_elastic),
-) -> FilmService:
+) -> FilmServiceGetFilms:
     return FilmServiceGetFilms(elastic)
 
 
 @lru_cache()
 def get_film_service_search_film(
         elastic: AsyncElasticsearch = Depends(get_elastic),
-) -> FilmService:
+) -> FilmServiceSearch:
     return FilmServiceSearch(elastic)
 
