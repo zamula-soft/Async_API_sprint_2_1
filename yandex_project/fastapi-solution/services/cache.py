@@ -19,7 +19,7 @@ class Cache:
         :param item_id: item id.
         :return: Model Item
         """
-        item_id = f'api_cache::elastic::movies::{item_id}'
+        item_id = f'api_cache::elastic::{self.name_model}::{item_id}'
         data = await self.redis.get(item_id)
         if not data:
             return None
