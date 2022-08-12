@@ -86,3 +86,14 @@ movies = [
         ],
     },
 ]
+
+persons = [
+            {"id": "5782e26f-62c8-4071-960d-be03ed030b47", "name": "Barbara Obermaier"},
+            {"id": "666325e3-f098-40d3-b6d9-77d551836927", "name": "Fosco Dubini"},
+            {"id": "a19557c4-9f2a-4481-b819-b311bb5c1cb4", "name": "Donatello Dubini"},
+            {"id": "3d3ae035-8278-47a5-a8f6-c493ccf9ddd9", "name": "Jesús Marugán"},
+            {"id": "6483591f-933a-4aca-a42e-76d06df60d1e", "name": "Natalia Gimeno"},
+            {"id": "9a5eef64-4d80-4365-a869-83ed7694dbf5", "name": "Ángel Beltrán"},
+            {"id": "3683c176-c96e-4850-ba76-3e3a0290bf3f", "name": "Dan Brown"},
+            {"id": "b48dc19f-2dff-45bf-b7c8-b4d5fcca83ff", "name": "Richard Cetrone"},
+]

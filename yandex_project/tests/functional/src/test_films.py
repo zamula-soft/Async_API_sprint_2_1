@@ -6,39 +6,9 @@ import pytest
 from functional.testdata import movies, movies_index
 
 
-@pytest.fixture(scope='session')
-async def create_index(es_client):
-    """Create and delete films indexes"""
-    await es_client.indices.delete(index='movies')
-    await es_client.indices.create(index='movies', body=movies_index)
-
-    create_actions = []
-    delete_actions = []
-
-    for film in movies:
-        delete_actions.append(
-            {
-                'delete': {
-                    '_index': 'movies',
-                    '_id': film['id'],
-                }
-            }
-        )
-        create_actions.extend(
-            (
-                {
-                    'index': {
-                        '_index': 'movies',
-                        '_id': film['id']
-                    }
-                },
-                film,
-            )
-        )
-
-    await es_client.bulk(create_actions, refresh='true')
-    yield 'create tests data'
-    await es_client.bulk(delete_actions, refresh='true')
+@pytest.fixture(scope="session", autouse=True)
+async def type_model():
+    yield 'movies', movies_index, movies
 
 
 @pytest.mark.asyncio
@@ -64,7 +34,7 @@ async def test_film_detailed(create_index, make_get_request, redis_client):
 
 
 @pytest.mark.asyncio
-async def test_get_film(make_get_request):
+async def test_get_film(create_index, make_get_request):
     """Tests wrong get film with wrong id."""
     response = await make_get_request('/films/unknown')
 
@@ -73,7 +43,7 @@ async def test_get_film(make_get_request):
 
 
 @pytest.mark.asyncio
-async def test_get_films(make_get_request):
+async def test_get_films(create_index, make_get_request):
     """Tests get all films."""
     response = await make_get_request('/films')
 
@@ -84,7 +54,7 @@ async def test_get_films(make_get_request):
 
 
 @pytest.mark.asyncio
-async def test_get_films_pagination(make_get_request):
+async def test_get_films_pagination(create_index, make_get_request):
     """Tests work pagination."""
     params = {'page[size]': 1}
     response = await make_get_request('/films', params=params)
@@ -97,7 +67,7 @@ async def test_get_films_pagination(make_get_request):
 
 
 @pytest.mark.asyncio
-async def test_get_films_order(make_get_request):
+async def test_get_films_order(create_index, make_get_request):
     """Tests work ordering."""
     params = {'page[size]': 1, 'sort': 'rating'}
     response = await make_get_request('/films', params=params)
@@ -112,7 +82,7 @@ async def test_get_films_order(make_get_request):
 
 
 @pytest.mark.asyncio
-async def test_search_films(make_get_request):
+async def test_search_films(create_index, make_get_request):
     """Tests search films."""
     params = {'search_word': 'Hedy'}
     response = await make_get_request('/films/search/', params=params)

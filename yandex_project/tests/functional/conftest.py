@@ -63,3 +63,42 @@ async def es_client():
     )
     yield client
     await client.close()
+
+
+@pytest.fixture(scope='session')
+async def create_index(es_client, type_model):
+    """Create and delete films indexes"""
+
+    name_index, structure_index, data = type_model
+
+    if await es_client.indices.exists(index=name_index):
+        await es_client.indices.delete(index=name_index)
+    await es_client.indices.create(index=name_index, body=structure_index)
+
+    create_actions = []
+    delete_actions = []
+
+    for item in data:
+        delete_actions.append(
+            {
+                'delete': {
+                    '_index': name_index,
+                    '_id': item['id'],
+                }
+            }
+        )
+        create_actions.extend(
+            (
+                {
+                    'index': {
+                        '_index': name_index,
+                        '_id': item['id']
+                    }
+                },
+                item,
+            )
+        )
+
+    await es_client.bulk(create_actions, refresh='true')
+    yield 'create tests data'
+    await es_client.bulk(delete_actions, refresh='true')
