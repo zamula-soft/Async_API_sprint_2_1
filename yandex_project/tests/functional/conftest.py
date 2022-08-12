@@ -25,7 +25,6 @@ def make_get_request(session):
     async def inner(method: str, params: dict = None) -> HTTPResponse:
         params = params or {}
         url = 'http://fastapi:8010/api/v1' + method
-        print(url)
         async with session.get(url, params=params) as response:
             return HTTPResponse(
                 body=await response.json(),
@@ -73,11 +72,10 @@ async def create_index(es_client):
     dict_data = [
         {'name_index': 'movies', 'structure_index': movies_index, 'data': movies},
         {'name_index': 'persons', 'structure_index': person_index, 'data': persons},
+        {'name_index': 'genres', 'structure_index': genre_index, 'data': genres},
     ]
 
     for type_index in dict_data:
-
-        print(type_index)
 
         name_index = type_index['name_index']
         structure_index = type_index['structure_index']

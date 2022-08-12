@@ -97,7 +97,6 @@ class GenreService:
         :param genre_id: Genre id.
         :return: Model Genre.
         """
-        genre_id = f'api_cache::elastic::genre::{genre_id}'
         try:
             doc = await self.elastic.get('genres', genre_id)
         except NotFoundError:
@@ -110,6 +109,7 @@ class GenreService:
         :param genre_id: genre.id.
         :return: Model Genre
         """
+        genre_id = f'api_cache::elastic::genres::{genre_id}'
         data = await self.redis.get(genre_id)
         if not data:
             return None
@@ -122,7 +122,7 @@ class GenreService:
         :param genre: genre.id
         :return:
         """
-        genre_id = f'api_cache::elastic::genre::{genre.id}'
+        genre_id = f'api_cache::elastic::genres::{genre.id}'
         await self.redis.set(genre_id, genre.json(), expire=GENRE_CACHE_EXPIRE_IN_SECONDS)
 
 

@@ -193,21 +193,25 @@ person_index = {
 genre_index = {
     "settings": settings_for_indexes,
     "mappings": {
-        "dynamic": "strict",
-        "properties":
-            {
-                "id": {
-                    "type": "keyword"
-                },
-                "name": {
-                    "type": "text",
-                    "analyzer": "ru_en",
-                    "fields": {
-                        "raw": {
-                            "type": "keyword"
-                        }
+        "properties": {
+            "id": {
+                "type": "text",
+                "fields": {
+                    "keyword": {
+                        "type": "keyword",
+                        "ignore_above": 256,
                     }
-                },
+                }
             },
+            "name": {
+                "type": "text",
+                "fields": {
+                    "keyword": {
+                        "type": "keyword",
+                        "ignore_above": 256,
+                    }
+                }
+            }
+        }
     }
 }
