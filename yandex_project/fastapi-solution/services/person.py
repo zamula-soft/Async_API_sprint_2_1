@@ -127,7 +127,7 @@ class PersonService:
         :param person_id: person id.
         :return: Model Person
         """
-        person_id = f'api_cache::elastic::person::{person_id}'
+        person_id = f'api_cache::elastic::persons::{person_id}'
         data = await self.redis.get(person_id)
         if not data:
             return None
@@ -141,7 +141,7 @@ class PersonService:
         :param person: person.id
         :return:
         """
-        person_id = f'api_cache::elastic::person::{person.id}'
+        person_id = f'api_cache::elastic::persons::{person.id}'
         await self.redis.set(person_id, person.json(), expire=PERSON_CACHE_EXPIRE_IN_SECONDS)
 
 

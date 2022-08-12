@@ -8,7 +8,7 @@ from elasticsearch import AsyncElasticsearch
 from multidict import CIMultiDictProxy
 
 from functional.core import TestSettings
-
+from functional.testdata import movies, movies_index, person_index, persons, genre_index, genres
 
 settings = TestSettings()
 
@@ -25,6 +25,7 @@ def make_get_request(session):
     async def inner(method: str, params: dict = None) -> HTTPResponse:
         params = params or {}
         url = 'http://fastapi:8010/api/v1' + method
+        print(url)
         async with session.get(url, params=params) as response:
             return HTTPResponse(
                 body=await response.json(),
@@ -66,39 +67,59 @@ async def es_client():
 
 
 @pytest.fixture(scope='session')
-async def create_index(es_client, type_model):
+async def create_index(es_client):
     """Create and delete films indexes"""
 
-    name_index, structure_index, data = type_model
+    dict_data = [
+        {'name_index': 'movies', 'structure_index': movies_index, 'data': movies},
+        {'name_index': 'persons', 'structure_index': person_index, 'data': persons},
+    ]
 
-    if await es_client.indices.exists(index=name_index):
-        await es_client.indices.delete(index=name_index)
-    await es_client.indices.create(index=name_index, body=structure_index)
+    for type_index in dict_data:
 
-    create_actions = []
-    delete_actions = []
+        print(type_index)
 
-    for item in data:
-        delete_actions.append(
-            {
-                'delete': {
-                    '_index': name_index,
-                    '_id': item['id'],
-                }
-            }
-        )
-        create_actions.extend(
-            (
-                {
-                    'index': {
-                        '_index': name_index,
-                        '_id': item['id']
-                    }
-                },
-                item,
+        name_index = type_index['name_index']
+        structure_index = type_index['structure_index']
+        data = type_index['data']
+
+        if await es_client.indices.exists(index=name_index):
+            await es_client.indices.delete(index=name_index)
+        await es_client.indices.create(index=name_index, body=structure_index)
+
+        create_actions = []
+
+        for item in data:
+            create_actions.extend(
+                (
+                    {
+                        'index': {
+                            '_index': name_index,
+                            '_id': item['id']
+                        }
+                    },
+                    item,
+                )
             )
-        )
 
-    await es_client.bulk(create_actions, refresh='true')
+        await es_client.bulk(create_actions, refresh='true')
+
     yield 'create tests data'
-    await es_client.bulk(delete_actions, refresh='true')
+
+    for type_index in dict_data:
+        name_index = type_index['name_index']
+        data = type_index['data']
+
+        delete_actions = []
+
+        for item in data:
+            delete_actions.append(
+                {
+                    'delete': {
+                        '_index': name_index,
+                        '_id': item['id'],
+                    }
+                }
+            )
+
+        await es_client.bulk(delete_actions, refresh='true')

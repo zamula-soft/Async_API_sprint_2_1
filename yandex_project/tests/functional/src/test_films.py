@@ -3,12 +3,7 @@ import json
 
 import pytest
 
-from functional.testdata import movies, movies_index
-
-
-@pytest.fixture(scope="session", autouse=True)
-async def type_model():
-    yield 'movies', movies_index, movies
+from functional.testdata import movies
 
 
 @pytest.mark.asyncio
