@@ -7,7 +7,7 @@ from functional.testdata import genres
 
 
 @pytest.mark.asyncio
-async def test_get_all_genres(make_get_request):
+async def test_get_all_genres(create_index, make_get_request):
     response = await make_get_request("/genres")
 
     assert response.status == HTTPStatus.OK
@@ -16,7 +16,7 @@ async def test_get_all_genres(make_get_request):
 
 
 @pytest.mark.asyncio
-async def test_get_genre_by_id(make_get_request):
+async def test_get_genre_by_id(create_index, make_get_request):
     for genre in genres:
         genre_id = genre["id"]
         response = await make_get_request(f"/genres/{genre_id}")
@@ -42,7 +42,7 @@ async def test_person_detailed(create_index, make_get_request, redis_client):
 
 
 @pytest.mark.asyncio
-async def test_get_film_by_genre(make_get_request):
+async def test_get_film_by_genre(create_index, make_get_request):
     genre = genres[1]
     genre_id = genre["id"]
     response = await make_get_request(f"/genres/{genre_id}/films/", params={})

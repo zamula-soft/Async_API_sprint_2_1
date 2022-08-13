@@ -13,7 +13,14 @@ from models.genre import Genre
 from models.film import Film
 
 
-class GetAllGenres(Service):
+class GetAllGenres:
+
+    def __init__(self, storage: ABCStorage) -> None:
+        """
+        Init.
+        :param storage: connect to Storage
+        """
+        self.storage = storage
 
     async def get(self, page_size: int = 10, page_number: int = 0, order_by: str = '-name'):
 
@@ -33,12 +40,19 @@ class GetAllGenres(Service):
             ]
         }
 
-        resp = await self.elastic.search(index='genres', body=elastic_query)
+        resp = await self.storage.search_from_storage(name_index='genres', query=elastic_query)
 
         return get_result(resp=resp, page_size=page_size, page_number=page_number, model=Genre)
 
 
-class GetMoviesByGenre(Service):
+class GetMoviesByGenre:
+
+    def __init__(self, storage: ABCStorage) -> None:
+        """
+        Init.
+        :param storage: connect to Storage
+        """
+        self.storage = storage
 
     async def get(
             self, genre_id: str = '', page_size: int = 10, page_number: int = 0, order_by: str = '-rating'):
@@ -65,7 +79,7 @@ class GetMoviesByGenre(Service):
             ]
         }
 
-        resp = await self.elastic.search(index='movies', body=elastic_query)
+        resp = await self.storage.search_from_storage(name_index='movies', query=elastic_query)
 
         return get_result(resp, page_size, page_number, Film)
 
@@ -80,13 +94,13 @@ def get_genres_service_get_by_id(
 
 @lru_cache()
 def get_genres_service_get_all(
-        elastic: AsyncElasticsearch = Depends(get_elastic),
+        storage: ABCStorage = Depends(get_elastic_storage_service),
 ) -> GetAllGenres:
-    return GetAllGenres(elastic)
+    return GetAllGenres(storage)
 
 
 @lru_cache()
 def get_films_service_get_by_genre(
-        elastic: AsyncElasticsearch = Depends(get_elastic),
+        storage: ABCStorage = Depends(get_elastic_storage_service),
 ) -> GetMoviesByGenre:
-    return GetMoviesByGenre(elastic)
+    return GetMoviesByGenre(storage)

@@ -13,7 +13,14 @@ from .service import ServiceGetByID, Service, ABCStorage, get_elastic_storage_se
 from .cache import AsyncCacheStorage, get_redis_storage_service_persons
 
 
-class GetAllPersons(Service):
+class GetAllPersons:
+
+    def __init__(self, storage: ABCStorage) -> None:
+        """
+        Init.
+        :param storage: connect to Storage
+        """
+        self.storage = storage
 
     async def get(self, page_size: int = 10, page_number: int = 0, order_by: str = '-full_name'):
 
@@ -33,12 +40,19 @@ class GetAllPersons(Service):
             ]
         }
 
-        resp = await self.elastic.search(index='persons', body=elastic_query)
+        resp = await self.storage.search_from_storage(name_index='persons', query=elastic_query)
 
         return get_result(resp=resp, page_size=page_size, page_number=page_number, model=Person)
 
 
-class GetMoviesByPerson(Service):
+class GetMoviesByPerson:
+
+    def __init__(self, storage: ABCStorage) -> None:
+        """
+        Init.
+        :param storage: connect to Storage
+        """
+        self.storage = storage
 
     async def get(
             self,
@@ -83,7 +97,7 @@ class GetMoviesByPerson(Service):
             ]
         }
 
-        resp = await self.elastic.search(index='movies', body=elastic_query)
+        resp = await self.storage.search_from_storage(name_index='movies', query=elastic_query)
 
         return get_result(resp, page_size, page_number, Film)
 
@@ -98,13 +112,13 @@ def get_persons_service_get_by_id(
 
 @lru_cache()
 def get_persons_service_get_all(
-        elastic: AsyncElasticsearch = Depends(get_elastic),
+        storage: ABCStorage = Depends(get_elastic_storage_service),
 ) -> GetAllPersons:
-    return GetAllPersons(elastic)
+    return GetAllPersons(storage)
 
 
 @lru_cache()
 def get_films_service_get_by_person(
-        elastic: AsyncElasticsearch = Depends(get_elastic),
+        storage: ABCStorage = Depends(get_elastic_storage_service),
 ) -> GetMoviesByPerson:
-    return GetMoviesByPerson(elastic)
+    return GetMoviesByPerson(storage)
