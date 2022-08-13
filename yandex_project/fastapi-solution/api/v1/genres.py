@@ -10,6 +10,7 @@ from services import (
 )
 from api.v1.messges import message_not_found
 from api.v1.models import Genre, Films, Genres
+from .paginator import Paginator
 
 
 router = APIRouter()
@@ -17,18 +18,7 @@ router = APIRouter()
 
 @router.get('/', response_model=Genres)
 async def get_all_genres(
-        page_size: int = Query(
-            ge=1,
-            le=100,
-            default=10,
-            alias='page[size]',
-            description='Items amount on page',
-        ),
-        page_number: int = Query(
-            default=0,
-            alias='page[number]',
-            description='Page number for pagination',
-            ge=0),
+        paginator: Paginator = Depends(),
         sort: str = Query(
             default='name',
             regex='^-?name',
@@ -42,7 +32,7 @@ async def get_all_genres(
     - **page_number**: page number
     """
 
-    genres = await genre_service.get(page_size=page_size, page_number=page_number, order_by=sort)
+    genres = await genre_service.get(page_size=paginator.page_size, page_number=paginator.page_number, order_by=sort)
     return genres
 
 
@@ -62,18 +52,7 @@ async def genre_details(genre_id: str, genre_service: ServiceGetByID = Depends(g
 @router.get('/{genre_id}/films/', response_model=Films)
 async def get_films_by_genre(
         genre_id: str,
-        page_size: int = Query(
-            ge=1,
-            le=100,
-            default=10,
-            alias='page[size]',
-            description='Items amount on page',
-        ),
-        page_number: int = Query(
-            default=0,
-            alias='page[number]',
-            description='Page number for pagination',
-            ge=0),
+        paginator: Paginator = Depends(),
         sort: str = Query(
             default='-rating',
             regex='^-?(rating|title)',
@@ -91,8 +70,8 @@ async def get_films_by_genre(
 
     films = await genre_service.get(
         genre_id=genre_id,
-        page_size=page_size,
-        page_number=page_number,
+        page_size=paginator.page_size,
+        page_number=paginator.page_number,
         order_by=sort
     )
 

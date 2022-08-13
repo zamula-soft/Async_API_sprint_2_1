@@ -10,6 +10,7 @@ from services import (
 )
 from api.v1.messges import message_not_found
 from api.v1.models import Person, Films, Persons
+from .paginator import Paginator
 
 
 router = APIRouter()
@@ -17,22 +18,11 @@ router = APIRouter()
 
 @router.get('/', response_model=Persons)
 async def get_all_persons(
-        page_size: int = Query(
-            ge=1,
-            le=100,
-            default=10,
-            alias='page[size]',
-            description='Items amount on page',
-        ),
-        page_number: int = Query(
-            default=0,
-            alias='page[number]',
-            description='Page number for pagination',
-            ge=0),
         sort: str = Query(
             default='-full_name',
             regex='^-?full_name',
             description='You can use only: full_name, -full_name'),
+        paginator: Paginator = Depends(),
         service: GetAllPersons = Depends(get_persons_service_get_all),
 ) -> Persons:
     """
@@ -43,7 +33,7 @@ async def get_all_persons(
 
     """
 
-    persons = await service.get(page_size=page_size, page_number=page_number, order_by=sort)
+    persons = await service.get(page_size=paginator.page_size, page_number=paginator.page_number, order_by=sort)
     return Persons(pagination=persons['pagination'], result=persons['result'])
 
 
@@ -64,18 +54,7 @@ async def person_details(person_id: str, service: ServiceGetByID = Depends(get_p
 @router.get('/{person_id}/films/', response_model=Films)
 async def get_films_by_person(
         person_id: str,
-        page_size: int = Query(
-            ge=1,
-            le=100,
-            default=10,
-            alias='page[size]',
-            description='Items amount on page',
-        ),
-        page_number: int = Query(
-            default=0,
-            alias='page[number]',
-            description='Page number for pagination',
-            ge=0),
+        paginator: Paginator = Depends(),
         sort: str = Query(
             default='-rating',
             regex='^-?(rating|title)',
@@ -100,8 +79,8 @@ async def get_films_by_person(
 
     films = await service.get(
         person_id=person_id,
-        page_size=page_size,
-        page_number=page_number,
+        page_size=paginator.page_size,
+        page_number=paginator.page_number,
         order_by=sort,
         role=role,
     )
