@@ -20,3 +20,10 @@ from .person import (
     GetAllPersons,
 )
 from .service import Service, ServiceGetByID
+from .cache import (
+    AsyncCacheStorage,
+    get_redis_storage_service_genres,
+    get_redis_storage_service_movies,
+    get_redis_storage_service_persons,
+    get_redis_storage_service,
+)

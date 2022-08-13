@@ -1,23 +1,41 @@
-from typing import Optional, Union, Type
+from typing import Optional, Union
+from abc import ABC, abstractmethod
+from functools import lru_cache
 
 from aioredis import Redis
 from backoff import on_exception, expo
+from fastapi import Depends
 
+from db import get_redis
 from models import Film, Person, Genre
 
 CACHE_EXPIRE_IN_SECONDS = 60 * 5  # 5 минут
 
 
-class RedisCache:
+class AsyncCacheStorage(ABC):
+
+    name_model = ''
+    model = None
+
+    @abstractmethod
+    async def get_from_cache(self, **kwargs):
+        pass
+
+    @abstractmethod
+    async def set_to_cache(self, **kwargs):
+        pass
+
+
+class RedisCache(AsyncCacheStorage):
     """Work with cache from Redis"""
 
-    def __init__(self, redis: Redis, name_model: str, model: Type[Union[Film, Person, Genre]]):
+    def __init__(self, redis: Redis, name_model, model):
         """Init."""
         self.redis = redis
         self.name_model = name_model
         self.model = model
 
-    async def _from_cache(self, item_id: str) -> Optional[Union[Film, Person, Genre]]:
+    async def get_from_cache(self, item_id: str, **kwargs) -> Optional[Union[Film, Person, Genre]]:
         """
         Get item from Redis.
         :param item_id: item id.
@@ -31,7 +49,7 @@ class RedisCache:
 
         return self.model.parse_raw(data)
 
-    async def _put_to_cache(self, item: Union[Film, Person, Genre]) -> None:
+    async def set_to_cache(self, item: Union[Film, Person, Genre]) -> None:
         """
         Save item to Redis. Create cache.
         :param item: Model
@@ -46,3 +64,31 @@ class RedisCache:
         """Check work redis."""
         if not self.redis.ping():
             raise ConnectionError
+
+
+@lru_cache()
+def get_redis_storage_service_movies(
+        redis: Redis = Depends(get_redis),
+) -> RedisCache:
+    return RedisCache(redis, name_model='movies', model=Film)
+
+
+@lru_cache()
+def get_redis_storage_service_persons(
+        redis: Redis = Depends(get_redis),
+) -> RedisCache:
+    return RedisCache(redis, name_model='persons', model=Person)
+
+
+@lru_cache()
+def get_redis_storage_service_genres(
+        redis: Redis = Depends(get_redis),
+) -> RedisCache:
+    return RedisCache(redis, name_model='genres', model=Genre)
+
+
+@lru_cache()
+def get_redis_storage_service(
+        redis: Redis = Depends(get_redis),
+) -> RedisCache:
+    return RedisCache(redis, name_model='genres', model=Genre)

@@ -10,6 +10,7 @@ from db.redis import get_redis
 from models import Film
 from .result import get_result
 from .service import Service, ServiceGetByID
+from .cache import RedisCache, AsyncCacheStorage, get_redis_storage_service_movies
 
 
 class FilmServiceSearch(Service):
@@ -80,10 +81,10 @@ class FilmServiceGetFilms(Service):
 
 @lru_cache()
 def get_film_service_get_by_id(
-        redis: Redis = Depends(get_redis),
+        redis: AsyncCacheStorage = Depends(get_redis_storage_service_movies),
         elastic: AsyncElasticsearch = Depends(get_elastic),
 ) -> ServiceGetByID:
-    return ServiceGetByID(elastic=elastic, redis=redis, name_model='movies', model=Film)
+    return ServiceGetByID(elastic=elastic, cache_storage=redis)
 
 
 @lru_cache()

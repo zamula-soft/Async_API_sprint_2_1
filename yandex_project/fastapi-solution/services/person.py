@@ -10,6 +10,7 @@ from models.person import Person
 from models.film import Film
 from .result import get_result
 from .service import ServiceGetByID, Service
+from .cache import AsyncCacheStorage, get_redis_storage_service_persons
 
 
 class GetAllPersons(Service):
@@ -89,10 +90,10 @@ class GetMoviesByPerson(Service):
 
 @lru_cache()
 def get_persons_service_get_by_id(
-        redis: Redis = Depends(get_redis),
+        redis: AsyncCacheStorage = Depends(get_redis_storage_service_persons),
         elastic: AsyncElasticsearch = Depends(get_elastic),
 ) -> ServiceGetByID:
-    return ServiceGetByID(elastic=elastic, redis=redis, name_model='persons', model=Person)
+    return ServiceGetByID(elastic=elastic, cache_storage=redis)
 
 
 @lru_cache()

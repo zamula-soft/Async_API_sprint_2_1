@@ -5,7 +5,7 @@ from elasticsearch import AsyncElasticsearch, NotFoundError
 from backoff import on_exception, expo
 
 from models import Film, Person, Genre
-from .cache import RedisCache
+from .cache import RedisCache, AsyncCacheStorage
 
 
 class Service:
@@ -25,14 +25,12 @@ class Service:
             raise ConnectionError
 
 
-class ServiceGetByID(Service, RedisCache):
+class ServiceGetByID(Service):
     """Service for get item by id."""
     def __init__(
             self,
-            redis: Redis,
+            cache_storage: AsyncCacheStorage,
             elastic: AsyncElasticsearch,
-            name_model: str,
-            model: Type[Union[Film, Person, Genre]]
     ) -> None:
         """
         Init.
@@ -43,9 +41,7 @@ class ServiceGetByID(Service, RedisCache):
         """
         super(ServiceGetByID, self).__init__(elastic=elastic)
         # Это место мне не очень нравится, но я не знаю, как сделать лучше.
-        self.redis = redis
-        self.name_model = name_model
-        self.model = model
+        self.cache_storage = cache_storage
 
     async def get(self, item_id: str) -> Optional[Union[Film, Person, Genre]]:
         """
@@ -53,13 +49,12 @@ class ServiceGetByID(Service, RedisCache):
         :param item_id: Item id.
         :return: Model
         """
-
-        item = await self._from_cache(item_id)
+        item = await self.cache_storage.get_from_cache(item_id=item_id)
         if not item:
             item = await self._get_from_elastic(item_id)
             if not item:
                 return None
-            await self._put_to_cache(item)
+            await self.cache_storage.set_to_cache(item=item)
         return item
 
     async def _get_from_elastic(self, item_id: str) -> Optional[Union[Film, Person, Genre]]:
@@ -71,7 +66,7 @@ class ServiceGetByID(Service, RedisCache):
         await self.check_elastic_connection()
 
         try:
-            doc = await self.elastic.get(self.name_model, item_id)
+            doc = await self.elastic.get(self.cache_storage.name_model, item_id)
         except NotFoundError:
             return None
-        return self.model(**doc['_source'])
+        return self.cache_storage.model(**doc['_source'])
