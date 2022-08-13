@@ -20,6 +20,8 @@ class Settings(BaseSettings):
     elastic_host: str = Field(..., env='ES_HOST')
     elastic_port: str = Field(..., env='ES_PORT')
 
+    CACHE_EXPIRE_IN_SECONDS: int = 60 * 5  # 5 минут
+
     class Config:
         env_file = '.env'
 

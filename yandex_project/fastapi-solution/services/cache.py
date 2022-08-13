@@ -8,8 +8,7 @@ from fastapi import Depends
 
 from db import get_redis
 from models import Film, Person, Genre
-
-CACHE_EXPIRE_IN_SECONDS = 60 * 5  # 5 минут
+from core import settings
 
 
 class AsyncCacheStorage(ABC):
@@ -57,7 +56,7 @@ class RedisCache(AsyncCacheStorage):
         """
         await self.check_redis_connection()
         item_id = f'api_cache::elastic::{self.name_model}::{item.id}'
-        await self.redis.set(item_id, item.json(), expire=CACHE_EXPIRE_IN_SECONDS)
+        await self.redis.set(item_id, item.json(), expire=settings.CACHE_EXPIRE_IN_SECONDS)
 
     @on_exception(expo, BaseException)
     async def check_redis_connection(self) -> None:
