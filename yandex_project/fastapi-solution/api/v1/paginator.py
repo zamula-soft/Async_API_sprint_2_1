@@ -6,18 +6,17 @@ class Paginator:
     def __init__(
             self,
             page_size: int = Query(
-                default=20,
-                gt=0,
-                title="Page size",
-                description="Number of posts per page.",
-                alias="page[size]"),
+                ge=1,
+                le=100,
+                default=10,
+                alias='page[size]',
+                description='Items amount on page',
+            ),
             page_number: int = Query(
-                default=1,
-                gt=0,
-                title="Page number",
-                description="Pagination page number.",
-                alias="page[number]"
-            )
+                default=0,
+                alias='page[number]',
+                description='Page number for pagination',
+                ge=0),
     ):
         self.page_size = page_size
         self.page_number = page_number
