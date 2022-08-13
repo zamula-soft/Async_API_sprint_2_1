@@ -6,7 +6,9 @@ import pytest
 from functional.testdata import persons
 
 
-@pytest.mark.asyncio
+pytestmark = pytest.mark.asyncio
+
+
 async def test_get_persons(create_index, make_get_request):
     response = await make_get_request('/persons')
 
@@ -16,7 +18,6 @@ async def test_get_persons(create_index, make_get_request):
     assert len(result) == 8
 
 
-@pytest.mark.asyncio
 async def test_get_person_by_id(create_index, make_get_request):
     person = persons[0]
     person_id = person["id"]
@@ -26,7 +27,6 @@ async def test_get_person_by_id(create_index, make_get_request):
     assert response.body["full_name"] == person["full_name"]
 
 
-@pytest.mark.asyncio
 async def test_cache_person_by_id(create_index, make_get_request, redis_client):
     person = persons[0]
     person_id = person["id"]
@@ -42,7 +42,6 @@ async def test_cache_person_by_id(create_index, make_get_request, redis_client):
     assert person_id == persons_from_cache['id']
 
 
-@pytest.mark.asyncio
 async def test_get_film_by_person(create_index, make_get_request):
     person = persons[0]
     person_id = person["id"]

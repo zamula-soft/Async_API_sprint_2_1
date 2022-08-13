@@ -6,7 +6,9 @@ import pytest
 from functional.testdata import genres
 
 
-@pytest.mark.asyncio
+pytestmark = pytest.mark.asyncio
+
+
 async def test_get_all_genres(create_index, make_get_request):
     response = await make_get_request("/genres")
 
@@ -15,7 +17,6 @@ async def test_get_all_genres(create_index, make_get_request):
     assert len(result) == 3
 
 
-@pytest.mark.asyncio
 async def test_get_genre_by_id(create_index, make_get_request):
     for genre in genres:
         genre_id = genre["id"]
@@ -25,7 +26,6 @@ async def test_get_genre_by_id(create_index, make_get_request):
         assert response.body["name"] == genre["name"]
 
 
-@pytest.mark.asyncio
 async def test_person_detailed(create_index, make_get_request, redis_client):
     genre = genres[0]
     genre_id = genre["id"]
@@ -41,7 +41,6 @@ async def test_person_detailed(create_index, make_get_request, redis_client):
     assert genre_id == genres_from_cache['id']
 
 
-@pytest.mark.asyncio
 async def test_get_film_by_genre(create_index, make_get_request):
     genre = genres[1]
     genre_id = genre["id"]

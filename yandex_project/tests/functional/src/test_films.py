@@ -6,7 +6,9 @@ import pytest
 from functional.testdata import movies
 
 
-@pytest.mark.asyncio
+pytestmark = pytest.mark.asyncio
+
+
 async def test_film_detailed(create_index, make_get_request, redis_client):
     """Tests get film by id and test save film to cache."""
     data = movies[0]
@@ -28,7 +30,6 @@ async def test_film_detailed(create_index, make_get_request, redis_client):
     assert film_id == movies_from_cache['id']
 
 
-@pytest.mark.asyncio
 async def test_get_film(create_index, make_get_request):
     """Tests wrong get film with wrong id."""
     response = await make_get_request('/films/unknown')
@@ -37,7 +38,6 @@ async def test_get_film(create_index, make_get_request):
     assert response.body['detail'] == 'film with uuid unknown not found.'
 
 
-@pytest.mark.asyncio
 async def test_get_films(create_index, make_get_request):
     """Tests get all films."""
     response = await make_get_request('/films')
@@ -48,7 +48,6 @@ async def test_get_films(create_index, make_get_request):
     assert len(result) == 3
 
 
-@pytest.mark.asyncio
 async def test_get_films_pagination(create_index, make_get_request):
     """Tests work pagination."""
     params = {'page[size]': 1}
@@ -61,7 +60,6 @@ async def test_get_films_pagination(create_index, make_get_request):
     assert response.body['pagination']['last'] == 2
 
 
-@pytest.mark.asyncio
 async def test_get_films_order(create_index, make_get_request):
     """Tests work ordering."""
     params = {'page[size]': 1, 'sort': 'rating'}
@@ -76,7 +74,6 @@ async def test_get_films_order(create_index, make_get_request):
     assert result[0]['rating'] == data['rating']
 
 
-@pytest.mark.asyncio
 async def test_search_films(create_index, make_get_request):
     """Tests search films."""
     params = {'search_word': 'Hedy'}
