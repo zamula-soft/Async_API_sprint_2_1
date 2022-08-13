@@ -13,8 +13,15 @@ from .service import Service, ServiceGetByID, ABCStorage, get_elastic_storage_se
 from .cache import RedisCache, AsyncCacheStorage, get_redis_storage_service_movies
 
 
-class FilmServiceSearch(Service):
+class FilmServiceSearch:
     """Service for find film."""
+
+    def __init__(self, storage: ABCStorage) -> None:
+        """
+        Init.
+        :param storage: connect to Storage
+        """
+        self.storage = storage
 
     async def get(self, search_word: str, page_size: int = 10, page_number: int = 0) -> Dict:
         """
@@ -24,8 +31,6 @@ class FilmServiceSearch(Service):
         :param page_number: number of page.
         :return:
         """
-
-        await self.check_elastic_connection()
 
         elastic_query = {
             "size": page_size,
@@ -38,13 +43,20 @@ class FilmServiceSearch(Service):
                 }
             }
         }
-        resp = await self.elastic.search(index='movies', body=elastic_query)
+        resp = await self.storage.search_from_storage(name_index='movies', query=elastic_query)
 
         return get_result(resp, page_size, page_number, Film)
 
 
-class FilmServiceGetFilms(Service):
+class FilmServiceGetFilms:
     """Service for get all films."""
+
+    def __init__(self, storage: ABCStorage) -> None:
+        """
+        Init.
+        :param storage: connect to Storage
+        """
+        self.storage = storage
 
     async def get(self, page_size: int = 10, page_number: int = 0, order_by: str = '-rating'):
         """
@@ -54,8 +66,6 @@ class FilmServiceGetFilms(Service):
         :param order_by: sorting by rating or title
         :return:
         """
-
-        await self.check_elastic_connection()
 
         order = 'asc'
         if order_by.startswith('-'):
@@ -74,7 +84,7 @@ class FilmServiceGetFilms(Service):
             ]
         }
 
-        resp = await self.elastic.search(index='movies', body=elastic_query)
+        resp = await self.storage.search_from_storage(name_index='movies', query=elastic_query)
 
         return get_result(resp, page_size, page_number, Film)
 
@@ -89,14 +99,14 @@ def get_film_service_get_by_id(
 
 @lru_cache()
 def get_film_service_get_films(
-        elastic: AsyncElasticsearch = Depends(get_elastic),
+        storage: ABCStorage = Depends(get_elastic_storage_service),
 ) -> FilmServiceGetFilms:
-    return FilmServiceGetFilms(elastic)
+    return FilmServiceGetFilms(storage)
 
 
 @lru_cache()
 def get_film_service_search_film(
-        elastic: AsyncElasticsearch = Depends(get_elastic),
+        storage: ABCStorage = Depends(get_elastic_storage_service),
 ) -> FilmServiceSearch:
-    return FilmServiceSearch(elastic)
+    return FilmServiceSearch(storage)
 

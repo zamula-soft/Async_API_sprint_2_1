@@ -18,6 +18,10 @@ class ABCStorage(ABC):
     def get_from_storage(self, **kwargs):
         pass
 
+    @abstractmethod
+    def search_from_storage(self, **kwargs):
+        pass
+
 
 class ElasticStorage(ABCStorage):
 
@@ -43,6 +47,12 @@ class ElasticStorage(ABCStorage):
             return None
 
         return doc
+
+    async def search_from_storage(self, name_index, query):
+        await self.check_elastic_connection()
+
+        return await self.elastic.search(index=name_index, body=query)
+
 
 class Service:
     """Service for get data from elasticsearch."""
@@ -70,12 +80,9 @@ class ServiceGetByID:
     ) -> None:
         """
         Init.
-        :param redis: connect to Redis
-        :param elastic: connect to Elasticsearch
-        :param name_model: name model for redis
-        :param model: Model
+        :param cache_storage: connect to Cache
+        :param storage: connect to Storage
         """
-        # Это место мне не очень нравится, но я не знаю, как сделать лучше.
         self.cache_storage = cache_storage
         self.storage = storage
 
