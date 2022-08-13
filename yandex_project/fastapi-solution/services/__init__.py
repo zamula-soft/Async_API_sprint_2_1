@@ -12,5 +12,11 @@ from .genres import (
     GetMoviesByGenre,
     get_genres_service_get_all,
 )
-from .person import get_person_service, PersonService
+from .person import (
+    get_persons_service_get_all,
+    get_films_service_get_by_person,
+    get_persons_service_get_by_id,
+    GetMoviesByPerson,
+    GetAllPersons,
+)
 from .service import Service, ServiceGetByID

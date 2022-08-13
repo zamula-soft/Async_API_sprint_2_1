@@ -1,6 +1,13 @@
 from fastapi import APIRouter, Depends, Query
 
-from services.person import PersonService, get_person_service
+from services import (
+    ServiceGetByID,
+    GetAllPersons,
+    GetMoviesByPerson,
+    get_persons_service_get_all,
+    get_persons_service_get_by_id,
+    get_films_service_get_by_person,
+)
 from api.v1.messges import message_not_found
 from api.v1.models import Person, Films, Persons
 
@@ -26,7 +33,7 @@ async def get_all_persons(
             default='-full_name',
             regex='^-?full_name',
             description='You can use only: full_name, -full_name'),
-        service: PersonService = Depends(get_person_service),
+        service: GetAllPersons = Depends(get_persons_service_get_all),
 ) -> Persons:
     """
     Get all persons (sorted by name by default).
@@ -36,18 +43,18 @@ async def get_all_persons(
 
     """
 
-    persons = await service.get_persons(page_size=page_size, page_number=page_number, order_by=sort)
+    persons = await service.get(page_size=page_size, page_number=page_number, order_by=sort)
     return Persons(pagination=persons['pagination'], result=persons['result'])
 
 
 @router.get('/{person_id}', response_model=Person)
-async def person_details(person_id: str, service: PersonService = Depends(get_person_service)) -> Person:
+async def person_details(person_id: str, service: ServiceGetByID = Depends(get_persons_service_get_by_id)) -> Person:
     """
     Get person by id with all the information.
     - **person_id**: person uuid
     """
 
-    person = await service.get_by_id(person_id)
+    person = await service.get(person_id)
     if not person:
         raise message_not_found(name_object='person', id_object=person_id)
 
@@ -77,7 +84,7 @@ async def get_films_by_person(
             default='',
             regex='actor|writer|director',
             description='You can use only: actor, writer, director'),
-        service: PersonService = Depends(get_person_service)) -> Films:
+        service: GetMoviesByPerson = Depends(get_films_service_get_by_person)) -> Films:
     """
     Get all movies of a person (sorted by rating by default). 
     You can specify person's role to filter movies where person participated as an actor, writer or director.
@@ -91,7 +98,7 @@ async def get_films_by_person(
     if 'title' in sort:
         sort += '.keyword'
 
-    films = await service.get_movies_by_person(
+    films = await service.get(
         person_id=person_id,
         page_size=page_size,
         page_number=page_number,
