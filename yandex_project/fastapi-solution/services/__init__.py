@@ -19,7 +19,7 @@ from .person import (
     GetMoviesByPerson,
     GetAllPersons,
 )
-from .service import Service, ServiceGetByID
+from .service import Service, ServiceGetByID, ABCStorage, get_elastic_storage_service, ElasticStorage
 from .cache import (
     AsyncCacheStorage,
     get_redis_storage_service_genres,

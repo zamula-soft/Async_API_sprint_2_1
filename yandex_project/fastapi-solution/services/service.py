@@ -1,12 +1,48 @@
 from typing import Optional, Type, Union
+from abc import ABC, abstractmethod
+from functools import lru_cache
 
 from aioredis import Redis
 from elasticsearch import AsyncElasticsearch, NotFoundError
 from backoff import on_exception, expo
+from fastapi import Depends
 
 from models import Film, Person, Genre
 from .cache import RedisCache, AsyncCacheStorage
+from db import get_elastic
 
+
+class ABCStorage(ABC):
+
+    @abstractmethod
+    def get_from_storage(self, **kwargs):
+        pass
+
+
+class ElasticStorage(ABCStorage):
+
+    def __init__(self, elastic: AsyncElasticsearch) -> None:
+        """
+        Init.
+        :param elastic: connect to Elasticsearch
+        """
+        self.elastic = elastic
+
+    @on_exception(expo, BaseException)
+    async def check_elastic_connection(self) -> None:
+        """Check work elastic."""
+        if not self.elastic.ping():
+            raise ConnectionError
+
+    async def get_from_storage(self, name_index, query):
+        await self.check_elastic_connection()
+
+        try:
+            doc = await self.elastic.get(name_index, query)
+        except NotFoundError:
+            return None
+
+        return doc
 
 class Service:
     """Service for get data from elasticsearch."""
@@ -25,12 +61,12 @@ class Service:
             raise ConnectionError
 
 
-class ServiceGetByID(Service):
+class ServiceGetByID:
     """Service for get item by id."""
     def __init__(
             self,
             cache_storage: AsyncCacheStorage,
-            elastic: AsyncElasticsearch,
+            storage: ABCStorage,
     ) -> None:
         """
         Init.
@@ -39,9 +75,9 @@ class ServiceGetByID(Service):
         :param name_model: name model for redis
         :param model: Model
         """
-        super(ServiceGetByID, self).__init__(elastic=elastic)
         # Это место мне не очень нравится, но я не знаю, как сделать лучше.
         self.cache_storage = cache_storage
+        self.storage = storage
 
     async def get(self, item_id: str) -> Optional[Union[Film, Person, Genre]]:
         """
@@ -63,10 +99,15 @@ class ServiceGetByID(Service):
         :param item_id: Item id.
         :return: Model.
         """
-        await self.check_elastic_connection()
 
-        try:
-            doc = await self.elastic.get(self.cache_storage.name_model, item_id)
-        except NotFoundError:
+        doc = await self.storage.get_from_storage(name_index=self.cache_storage.name_model, query=item_id)
+        if not doc:
             return None
         return self.cache_storage.model(**doc['_source'])
+
+
+@lru_cache()
+def get_elastic_storage_service(
+        elastic: AsyncElasticsearch = Depends(get_elastic),
+) -> ElasticStorage:
+    return ElasticStorage(elastic)

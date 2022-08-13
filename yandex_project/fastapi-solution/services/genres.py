@@ -7,7 +7,7 @@ from fastapi import Depends
 from db.elastic import get_elastic
 from db.redis import get_redis
 from .result import get_result
-from .service import ServiceGetByID, Service
+from .service import ServiceGetByID, Service, ABCStorage, get_elastic_storage_service
 from .cache import AsyncCacheStorage, get_redis_storage_service_genres
 from models.genre import Genre
 from models.film import Film
@@ -73,9 +73,9 @@ class GetMoviesByGenre(Service):
 @lru_cache()
 def get_genres_service_get_by_id(
         redis: AsyncCacheStorage = Depends(get_redis_storage_service_genres),
-        elastic: AsyncElasticsearch = Depends(get_elastic),
+        storage: ABCStorage = Depends(get_elastic_storage_service),
 ) -> ServiceGetByID:
-    return ServiceGetByID(elastic=elastic, cache_storage=redis)
+    return ServiceGetByID(storage=storage, cache_storage=redis)
 
 
 @lru_cache()
