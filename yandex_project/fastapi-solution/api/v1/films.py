@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, Query
 
-from services.film import (
+from services import (
     FilmServiceSearch,
     FilmServiceGetFilms,
     ServiceGetByID,
