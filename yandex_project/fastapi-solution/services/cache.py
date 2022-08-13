@@ -85,10 +85,3 @@ def get_redis_storage_service_genres(
         redis: Redis = Depends(get_redis),
 ) -> RedisCache:
     return RedisCache(redis, name_model='genres', model=Genre)
-
-
-@lru_cache()
-def get_redis_storage_service(
-        redis: Redis = Depends(get_redis),
-) -> RedisCache:
-    return RedisCache(redis, name_model='genres', model=Genre)

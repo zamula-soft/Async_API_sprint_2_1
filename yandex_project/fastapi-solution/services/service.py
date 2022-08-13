@@ -1,14 +1,13 @@
-from typing import Optional, Type, Union
+from typing import Optional, Union
 from abc import ABC, abstractmethod
 from functools import lru_cache
 
-from aioredis import Redis
 from elasticsearch import AsyncElasticsearch, NotFoundError
 from backoff import on_exception, expo
 from fastapi import Depends
 
 from models import Film, Person, Genre
-from .cache import RedisCache, AsyncCacheStorage
+from .cache import AsyncCacheStorage
 from db import get_elastic
 
 
@@ -52,23 +51,6 @@ class ElasticStorage(ABCStorage):
         await self.check_elastic_connection()
 
         return await self.elastic.search(index=name_index, body=query)
-
-
-class Service:
-    """Service for get data from elasticsearch."""
-
-    def __init__(self, elastic: AsyncElasticsearch) -> None:
-        """
-        Init.
-        :param elastic: connect to Elasticsearch
-        """
-        self.elastic = elastic
-
-    @on_exception(expo, BaseException)
-    async def check_elastic_connection(self) -> None:
-        """Check work elastic."""
-        if not self.elastic.ping():
-            raise ConnectionError
 
 
 class ServiceGetByID:

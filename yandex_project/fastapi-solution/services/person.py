@@ -1,15 +1,11 @@
 from functools import lru_cache
 
-from aioredis import Redis
-from elasticsearch import AsyncElasticsearch
 from fastapi import Depends
 
-from db.elastic import get_elastic
-from db.redis import get_redis
 from models.person import Person
 from models.film import Film
 from .result import get_result
-from .service import ServiceGetByID, Service, ABCStorage, get_elastic_storage_service
+from .service import ServiceGetByID, ABCStorage, get_elastic_storage_service
 from .cache import AsyncCacheStorage, get_redis_storage_service_persons
 
 
