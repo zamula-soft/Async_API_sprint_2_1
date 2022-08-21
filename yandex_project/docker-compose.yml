@@ -11,6 +11,18 @@ services:
       - POSTGRES_DB=movies_database
     volumes:
       - pgdata:/var/lib/postgresql/data/
+  postgres_auth:
+    container_name: postgres_auth
+    platform: linux/amd64
+    image: postgres:14.3-alpine
+    expose:
+      - '5433'
+    environment:
+      - POSTGRES_USER=${DB_AUTH_USER}
+      - POSTGRES_PASSWORD=${DB_AUTH_PASSWORD}
+      - POSTGRES_DB=${DB_AUTH_NAME}
+    volumes:
+      - pgdata_auth:/var/lib/postgresql/data/
   service:
     platform: linux/amd64
     build:
@@ -86,6 +98,7 @@ services:
       - "9200"
   auth:
     container_name: auth
+    platform: linux/amd64
     build:
       context: ./auth
     env_file:
@@ -113,6 +126,7 @@ services:
 
 volumes:
   pgdata:
+  pgdata_auth:
   web-static:
   fastapi-solution:
   auth:
