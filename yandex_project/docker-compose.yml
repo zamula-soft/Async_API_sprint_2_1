@@ -36,6 +36,7 @@ services:
     ports:
       - "80:80"
       - "81:81"
+      - "82:82"
   redis:
     image: redis:latest
     expose:
@@ -83,6 +84,21 @@ services:
       - ./elasticsearch-data:/usr/share/elasticsearch/data
     expose:
       - "9200"
+  auth:
+    container_name: auth
+    build:
+      context: ./auth
+    env_file:
+      - .env
+    command: python3 pywsgi_app.py
+    volumes:
+      - ./auth:/opt/app/auth
+    expose:
+      - "5000"
+    depends_on:
+      - postgres
+      - redis
+
 #  kibana:
 #    container_name: kibana
 #    image: docker.elastic.co/kibana/kibana:7.17.4
@@ -99,3 +115,4 @@ volumes:
   pgdata:
   web-static:
   fastapi-solution:
+  auth:
