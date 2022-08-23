@@ -1,5 +1,3 @@
-from http import HTTPStatus
-
 from flask import request
 from werkzeug.security import generate_password_hash, check_password_hash
 
