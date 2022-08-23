@@ -3,10 +3,9 @@ from random import randint, sample, shuffle
 from re import match
 from http import HTTPStatus
 
-from flask import Blueprint, make_response
+from flask import Blueprint, make_response, request
 from flask_jwt_extended import create_access_token, create_refresh_token
 from werkzeug.security import generate_password_hash
-from werkzeug.local import LocalProxy
 
 from db import db
 from models import AuthHistory, User
@@ -69,17 +68,18 @@ def send_email():
     pass
 
 
-def return_error_answer(answer: str) -> make_response:
+def return_response_answer(answer: str, status_code: int, status: str) -> make_response:
     """
     Function for send error.
+    :param status_code:
     :param answer:
     :return:
     """
     return make_response(
         {
-            "message": answer,
-            "status": "error"
-        }, HTTPStatus.BAD_REQUEST)
+            'message': answer,
+            'status': status
+        }, status_code)
 
 
 def return_tokens(user: User) -> tuple:
@@ -88,6 +88,8 @@ def return_tokens(user: User) -> tuple:
     :param user:
     :return:
     """
+    add_auth_history(user=user)
+
     claims = {
         'name': user.name,
     }
@@ -100,9 +102,9 @@ def return_tokens(user: User) -> tuple:
             HTTPStatus.OK)
 
 
-def add_auth_history(user: User, request: LocalProxy) -> None:
+def add_auth_history(user: User) -> None:
     """Function for save history in db"""
-    agent = request.user_agent
+    agent = request.headers.get('User-Agent')
 
     auth = AuthHistory(user_id=user.id, browser=agent.browser,
                        platform=agent.platform, timestamp=datetime.now())

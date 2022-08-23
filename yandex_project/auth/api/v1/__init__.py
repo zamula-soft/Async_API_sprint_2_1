@@ -1,1 +1,1 @@
-from .auth import auth_blueprint
+from .register import auth_blueprint
