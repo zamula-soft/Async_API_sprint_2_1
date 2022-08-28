@@ -11,3 +11,9 @@ class Role(db.Model):
 
     def __repr__(self):
         return f'Role {self.name} {self.id}'
+
+    @classmethod
+    def exist_by_name(cls, role_name: str) -> bool:
+        return db.session.query(
+            cls.query.filter(cls.name == role_name).exists()
+        ).scalar()

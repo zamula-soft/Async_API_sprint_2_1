@@ -17,3 +17,7 @@ class UserRole(db.Model):
 
     def __repr__(self) -> str:
         return f'<UserRole {self.user_id}:{self.role_id}>'
+
+    @classmethod
+    def get_row_by_ids(cls, user_id: str, role_id: str) -> bool:
+        return cls.query.filter(cls.user_id == user_id, cls.role_id == role_id).first()
