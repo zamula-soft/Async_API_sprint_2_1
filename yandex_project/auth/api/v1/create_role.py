@@ -3,13 +3,13 @@ from flask import request
 from models import Role
 from db import db
 
-logger = get_logger('api_role_add')
+logger = get_logger('api_role_create')
 
 
-@auth_blueprint.route('/add-role', methods=('POST',))
-def add_role() -> tuple[dict, HTTPStatus]:
+@auth_blueprint.route('/create-role', methods=('POST',))
+def create_role() -> tuple[dict, HTTPStatus]:
     """
-    Add new role
+    Create new role
     params:
     role_name: title for the role
     """
@@ -27,6 +27,6 @@ def add_role() -> tuple[dict, HTTPStatus]:
         new_role = Role(name=role_name)
         db.session.add(new_role)
         db.session.commit()
-        return return_response_answer(answer='The role added', status='ok', status_code=HTTPStatus.OK)
+        return return_response_answer(answer='The role created', status='ok', status_code=HTTPStatus.OK)
 
     return return_response_answer(answer='Already has the role', status='ok', status_code=HTTPStatus.ACCEPTED)

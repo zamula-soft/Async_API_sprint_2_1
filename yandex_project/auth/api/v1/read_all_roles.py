@@ -3,7 +3,7 @@ from flask import request
 from models import Role
 from db import db
 
-logger = get_logger('api_role_add')
+logger = get_logger('api_read_all_roles')
 
 
 @auth_blueprint.route('/read-all-roles', methods=('GET',))

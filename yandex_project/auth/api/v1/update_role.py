@@ -3,13 +3,13 @@ from flask import request
 from models import Role
 from db import db
 
-logger = get_logger('api_role_add')
+logger = get_logger('api_role_update')
 
 
 @auth_blueprint.route('/update-role', methods=('POST',))
-def create_role() -> tuple[dict, HTTPStatus]:
+def update_role() -> tuple[dict, HTTPStatus]:
     """
-    Update role
+    Update the role
     params:
     role_name: title for the role
     new_role_name: new title for the role

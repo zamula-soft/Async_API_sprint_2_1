@@ -11,7 +11,7 @@ def delete_role() -> tuple[dict, HTTPStatus]:
     """
     Insert new role
     params:
-    role_name - title of the role
+    role_name: title for the role
     """
     logger.info('Check user Admin permissions')
     current_user_id: str = session['user_id']
